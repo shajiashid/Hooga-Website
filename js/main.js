@@ -14,20 +14,22 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  /* ---- Slide menu ---- */
+  /* ---- Menu panel ---- */
   const menuBtn = document.getElementById("menuBtn");
-  const slidemenu = document.getElementById("slidemenu");
+  const panel = document.getElementById("menuPanel");
   const backdrop = document.getElementById("menuBackdrop");
+  const menuClose = document.getElementById("menuClose");
   function setMenu(open) {
     menuBtn.classList.toggle("open", open);
-    slidemenu.classList.toggle("open", open);
+    panel.classList.toggle("open", open);
     backdrop.classList.toggle("show", open);
     menuBtn.setAttribute("aria-expanded", String(open));
     document.body.style.overflow = open ? "hidden" : "";
   }
-  menuBtn.addEventListener("click", () => setMenu(!slidemenu.classList.contains("open")));
+  menuBtn.addEventListener("click", () => setMenu(!panel.classList.contains("open")));
   backdrop.addEventListener("click", () => setMenu(false));
-  slidemenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  if (menuClose) menuClose.addEventListener("click", () => setMenu(false));
+  panel.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
 
   /* ---- Model switcher (M1S / M1R) ---- */
@@ -99,6 +101,66 @@
     specIO.observe(specsSection);
   }
 
+  /* ---- Statement paragraph: prepare word-by-word rise (revealed after the title) ---- */
+  const stBody = document.querySelector(".statement-body");
+  let revealBody = () => {};
+  if (stBody) {
+    const words = stBody.textContent.trim().split(/\s+/);
+    stBody.textContent = "";
+    const spans = words.map((word) => {
+      const s = document.createElement("span");
+      s.className = "rw";
+      s.textContent = word;
+      stBody.appendChild(s);
+      stBody.appendChild(document.createTextNode(" "));
+      return s;
+    });
+    if (!prefersReduce) spans.forEach((s, i) => (s.style.transitionDelay = i * 14 + "ms"));
+    let bodyDone = false;
+    revealBody = () => { if (!bodyDone) { bodyDone = true; stBody.classList.add("in"); } };
+    if (prefersReduce) revealBody();
+  }
+
+  /* ---- Statement title: scroll-linked reveal (Built Different first, then Proven Everywhere, then the paragraph) ---- */
+  const stPin = document.querySelector(".statement-pin");
+  const stLines = [...document.querySelectorAll(".statement-title .line")];
+  const stWords = [...document.querySelectorAll(".statement-title .word")];
+  const smooth = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+  if (stPin && stWords.length && !prefersReduce) {
+    // reveals are timed to the ON-SCREEN phase so each beat is actually seen:
+    // beat 1 "Built Different." floats up as it enters; beat 2 "Proven Everywhere." once pinned
+    const bands = [[0.28, 0.46], [0.58, 0.74]];
+    stLines.forEach((line, li) => {
+      const ws = [...line.querySelectorAll(".word")];
+      const [bs, be] = bands[li] || [0, 1];
+      ws.forEach((w, wi) => {
+        const t0 = bs + (be - bs) * (wi / ws.length);
+        const t1 = Math.min(t0 + (be - bs) * 0.85, be);
+        w._win = [t0, t1];
+      });
+    });
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const rect = stPin.getBoundingClientRect();
+      const h = stPin.offsetHeight;
+      const p = Math.min(Math.max((window.innerHeight - rect.top) / h, 0), 1);
+      stWords.forEach((w) => {
+        const o = smooth((p - w._win[0]) / (w._win[1] - w._win[0]));
+        w.style.opacity = o.toFixed(3);
+        w.style.transform = "translateY(" + (0.34 * (1 - o)).toFixed(3) + "em)";
+      });
+      if (p >= 0.84) revealBody(); // beat 3: description floats in once both lines are shown
+    };
+    const onScrollSt = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    window.addEventListener("scroll", onScrollSt, { passive: true });
+    window.addEventListener("resize", onScrollSt, { passive: true });
+    update();
+  } else {
+    stWords.forEach((w) => { w.style.opacity = "1"; w.style.transform = "none"; });
+    revealBody();
+  }
+
   /* ---- Reveal on scroll ---- */
   const revealEls = document.querySelectorAll("[data-reveal]");
   if ("IntersectionObserver" in window) {
@@ -120,42 +182,47 @@
     revealEls.forEach((el) => el.classList.add("in"));
   }
 
-  /* ---- Gallery drag-to-scroll ---- */
-  const track = document.getElementById("galleryTrack");
-  if (track) {
-    let down = false, startX = 0, startScroll = 0, moved = 0;
-    track.addEventListener("pointerdown", (e) => {
-      down = true; moved = 0; startX = e.clientX; startScroll = track.scrollLeft;
-      track.classList.add("dragging");
-    });
-    track.addEventListener("pointermove", (e) => {
-      if (!down) return;
-      const dx = e.clientX - startX; moved = Math.abs(dx);
-      track.scrollLeft = startScroll - dx;
-    });
-    const end = () => { down = false; track.classList.remove("dragging"); };
-    track.addEventListener("pointerup", end);
-    track.addEventListener("pointerleave", end);
-    track.querySelectorAll("a").forEach((a) =>
-      a.addEventListener("click", (e) => { if (moved > 6) e.preventDefault(); })
-    );
+  /* ---- Gallery: scroll-driven horizontal cards (vertical scroll -> cards slide left) ---- */
+  const gPin = document.getElementById("galleryPin");
+  const gTrack = document.getElementById("galleryTrack");
+  const gViewport = document.getElementById("galleryViewport");
+  if (gPin && gTrack && gViewport) {
+    const desktop = () => window.matchMedia("(min-width: 768px)").matches && !prefersReduce;
+    let maxX = 0;
+    const measure = () => {
+      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; maxX = 0; return; }
+      maxX = Math.max(0, gTrack.scrollWidth - gViewport.clientWidth);
+      gPin.style.height = window.innerHeight + maxX + "px"; // vertical scroll distance == horizontal travel
+    };
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      if (maxX <= 0) return;
+      const dist = gPin.offsetHeight - window.innerHeight;
+      const p = Math.min(Math.max(-gPin.getBoundingClientRect().top / dist, 0), 1);
+      gTrack.style.transform = "translate3d(" + (-p * maxX).toFixed(1) + "px,0,0)";
+    };
+    const onScrollG = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    measure(); update();
+    window.addEventListener("scroll", onScrollG, { passive: true });
+    window.addEventListener("load", () => { measure(); update(); });
+    let rsz;
+    window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { measure(); update(); }, 150); }, { passive: true });
   }
 
-  /* ---- Dimensions: reveal flags on touch ---- */
-  const dimStage = document.querySelector(".dim-stage");
-  if (dimStage && window.matchMedia("(hover: none)").matches) dimStage.classList.add("show-flags");
-
-  /* ---- Hero play -> toast ---- */
+  /* ---- Play buttons -> toast (hero + menu "Our story") ---- */
   const play = document.getElementById("heroPlay");
+  const story = document.getElementById("menuStory");
   const toast = document.getElementById("toast");
   let toastT;
-  if (play && toast) {
-    play.addEventListener("click", () => {
-      toast.classList.add("show");
-      clearTimeout(toastT);
-      toastT = setTimeout(() => toast.classList.remove("show"), 2400);
-    });
+  function showToast() {
+    if (!toast) return;
+    toast.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toast.classList.remove("show"), 2400);
   }
+  if (play) play.addEventListener("click", showToast);
+  if (story) story.addEventListener("click", () => { setMenu(false); setTimeout(showToast, 280); });
 
   /* ---- Reserve form ---- */
   const form = document.getElementById("reserveForm");

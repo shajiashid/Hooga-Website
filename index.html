@@ -27,16 +27,41 @@
     </div>
   </header>
 
-  <!-- ===== Slide menu ===== -->
+  <!-- ===== Menu panel (sunday-style dropdown) ===== -->
   <div class="menu-backdrop" id="menuBackdrop"></div>
-  <nav class="slidemenu" id="slidemenu" aria-label="Main">
-    <a href="#models">Models</a>
-    <a href="#specs">Performance</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#compare">Comparison</a>
-    <a href="#dimensions">Dimensions</a>
-    <a href="#compare" class="sm-cta">Reserve →</a>
-  </nav>
+  <div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="menu-top">
+      <span class="menu-mark" aria-hidden="true">H</span>
+      <img class="menu-word" src="assets/hooga-logo.png" alt="Hooga" />
+      <button class="menu-close" id="menuClose" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="menu-body">
+      <nav class="menu-nav" aria-label="Main">
+        <a href="#models">Models</a>
+        <a href="#specs">Technology</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#compare">Comparison</a>
+        <a href="#dimensions">Dimensions</a>
+      </nav>
+
+      <button class="menu-media" id="menuStory" type="button" aria-label="Watch our story">
+        <img src="assets/riders.jpg" alt="" />
+        <span class="menu-play">
+          <span class="menu-play-ic"><svg viewBox="0 0 24 24" width="12" height="12"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+          Our story
+        </span>
+      </button>
+    </div>
+
+    <div class="menu-foot">
+      <span>Electric trail motorcycles</span>
+      <span>Launching 2026</span>
+      <a href="#compare" class="menu-foot-cta">Founding Riders <i>★</i></a>
+    </div>
+  </div>
 
   <main id="top">
     <!-- ===== Hero ===== -->
@@ -87,59 +112,91 @@
       </div>
     </section>
 
-    <!-- ===== Statement ===== -->
+    <!-- ===== Statement (scroll-linked word reveal) ===== -->
     <section class="statement" id="models">
-      <div class="container">
-        <h2 class="statement-title">
-          <span class="line line-1" data-reveal>Built Different.</span>
-          <span class="line line-2" data-reveal>Proven Everywhere.</span>
-        </h2>
-        <p class="statement-body" data-reveal>
-          Engineered from a clean sheet, Hooga doesn't just keep up with the machines that
-          came before it — it rethinks what a trail motorcycle can be, and does more than any
-          bike that has come before it.
-        </p>
+      <div class="statement-pin">
+        <div class="statement-sticky">
+          <div class="container statement-inner">
+            <h2 class="statement-title" id="statementTitle">
+              <span class="line line-1"><span class="word">Built</span> <span class="word">Different.</span></span>
+              <span class="line line-2"><span class="word">Proven</span> <span class="word">Everywhere.</span></span>
+            </h2>
+            <p class="statement-body">
+              Engineered from a clean sheet, Hooga doesn't just keep up with the machines that
+              came before it — it rethinks what a trail motorcycle can be, and does more than any
+              bike that has come before it.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ===== Gallery (content cards) ===== -->
+    <!-- ===== Gallery: scroll-driven horizontal cards (sunday-style) ===== -->
     <section class="gallery" id="gallery">
-      <div class="gallery-track" id="galleryTrack">
-        <article class="card card-dark">
-          <img src="assets/helmet.jpg" alt="Hooga on a forest trail" loading="lazy" />
-          <div class="card-text">
-            <h3>Built for the wild</h3>
-            <p>A liquid-cooled motor and structural battery let Hooga take on hard trails
-              the moment the pavement ends — no warm-up, no compromise.</p>
+      <div class="gallery-pin" id="galleryPin">
+        <div class="gallery-sticky">
+          <div class="container gallery-head" data-reveal>
+            <p class="eyebrow">In its element</p>
+            <h2>Designed for real riding.</h2>
           </div>
-        </article>
+          <div class="gallery-viewport" id="galleryViewport">
+            <div class="gallery-track" id="galleryTrack">
+              <article class="card card-dark">
+                <img src="assets/helmet.jpg" alt="Hooga on a forest trail" loading="lazy" />
+                <div class="card-text">
+                  <h3>Built for the wild</h3>
+                  <p>A liquid-cooled motor and structural battery let Hooga take on hard trails
+                    the moment the pavement ends — no warm-up, no compromise.</p>
+                </div>
+              </article>
 
-        <article class="card card-cream">
-          <div class="card-text">
-            <h3>Stable at any speed</h3>
-            <p>A low centre of gravity, a long stable wheelbase, and a lightweight frame keep
-              you planted and confident from the first metre.</p>
-          </div>
-          <img src="assets/detail1.jpg" alt="Studio profile of the frame" loading="lazy" />
-        </article>
+              <article class="card card-cream">
+                <div class="card-text">
+                  <h3>Stable at any speed</h3>
+                  <p>A low centre of gravity, a long stable wheelbase, and a lightweight frame keep
+                    you planted and confident from the first metre.</p>
+                </div>
+                <img src="assets/detail1.jpg" alt="Studio profile of the frame" loading="lazy" />
+              </article>
 
-        <article class="card card-dark">
-          <img src="assets/moto.jpg" alt="Hooga at night in the city" loading="lazy" />
-          <div class="card-text">
-            <h3>Ready after dark</h3>
-            <p>Full-LED adaptive lighting and a silent drivetrain make every late ride feel
-              like the road was built just for you.</p>
-          </div>
-        </article>
+              <article class="card card-dark">
+                <img src="assets/moto.jpg" alt="Hooga at night in the city" loading="lazy" />
+                <div class="card-text">
+                  <h3>Ready after dark</h3>
+                  <p>Full-LED adaptive lighting and a silent drivetrain make every late ride feel
+                    like the road was built just for you.</p>
+                </div>
+              </article>
 
-        <article class="card card-dark">
-          <img src="assets/ride2.jpg" alt="Customisable Hooga" loading="lazy" />
-          <div class="card-text">
-            <h3>Tailored to you</h3>
-            <p>Choose from a curated selection of colourways and ride modes, then fine-tune
-              the throttle map to match exactly how you ride.</p>
+              <article class="card card-dark">
+                <img src="assets/ride2.jpg" alt="Customisable Hooga" loading="lazy" />
+                <div class="card-text">
+                  <h3>Tailored to you</h3>
+                  <p>Choose from a curated selection of colourways and ride modes, then fine-tune
+                    the throttle map to match exactly how you ride.</p>
+                </div>
+              </article>
+
+              <article class="card card-dark">
+                <img src="assets/riders.jpg" alt="Riders on the trail" loading="lazy" />
+                <div class="card-text">
+                  <h3>Track to trail</h3>
+                  <p>Swap ride modes and seat geometry in seconds — one machine that's just as
+                    at home on the track as it is deep in the dirt.</p>
+                </div>
+              </article>
+
+              <article class="card card-dark">
+                <img src="assets/hero.jpg" alt="Charging the Hooga" loading="lazy" />
+                <div class="card-text">
+                  <h3>Charge anywhere</h3>
+                  <p>A full charge overnight from any wall outlet, and a fast-charge to 80% at
+                    the stops that matter — range anxiety, retired.</p>
+                </div>
+              </article>
+            </div>
           </div>
-        </article>
+        </div>
       </div>
     </section>
 
@@ -199,25 +256,38 @@
       </div>
     </section>
 
-    <!-- ===== Dimensions ===== -->
+    <!-- ===== Dimensions (split image + black panel) ===== -->
     <section class="dims" id="dimensions">
       <div class="container">
-        <h2 class="center-title" data-reveal>Dimensions</h2>
-        <p class="center-sub" data-reveal>Every millimetre considered — engineered to disappear beneath you.</p>
+        <div class="dim-split">
+          <div class="dim-photo" data-reveal>
+            <img src="assets/dimensions.jpg" alt="Hooga electric trail bike — side-profile concept sketch" loading="lazy" />
+          </div>
 
-        <div class="dim-stage" data-reveal>
-          <img src="assets/helmet.jpg" alt="Hooga side profile" />
-          <div class="dpin" style="top:16%; left:50%"><span></span><div class="dflag"><b>1,090 mm</b><i>Overall height</i></div></div>
-          <div class="dpin" style="top:60%; left:22%"><span></span><div class="dflag"><b>1,380 mm</b><i>Wheelbase</i></div></div>
-          <div class="dpin" style="top:44%; left:80%"><span></span><div class="dflag"><b>845–900 mm</b><i>Seat height</i></div></div>
-          <div class="dpin" style="top:82%; left:54%"><span></span><div class="dflag"><b>270 mm</b><i>Ground clearance</i></div></div>
-        </div>
+          <div class="dim-panel" data-reveal>
+            <div class="dim-panel-head">
+              <p class="eyebrow">Every millimetre</p>
+              <h2>Dimensions</h2>
+              <p class="dim-lead">Engineered to disappear beneath you — every figure measured, nothing wasted.</p>
+            </div>
 
-        <div class="dim-grid" data-reveal>
-          <div class="dstat"><b>2,050 mm</b><span>Length</span></div>
-          <div class="dstat"><b>820 mm</b><span>Width</span></div>
-          <div class="dstat"><b>118 kg</b><span>Kerb weight</span></div>
-          <div class="dstat"><b>21" / 18"</b><span>Wheel size</span></div>
+            <ul class="dim-list">
+              <li><span>Overall length</span><b>2,050 mm</b></li>
+              <li><span>Wheelbase</span><b>1,380 mm</b></li>
+              <li><span>Seat height</span><b>845–900 mm</b></li>
+              <li><span>Ground clearance</span><b>270 mm</b></li>
+              <li><span>Kerb weight</span><b>118 kg</b></li>
+              <li><span>Wheels (F / R)</span><b>21" / 18"</b></li>
+            </ul>
+
+            <a class="dim-cta" href="#" aria-label="Download the spec sheet, PDF">
+              <span class="dim-cta-tag">.pdf</span>
+              <span class="dim-cta-row">
+                <span>Download spec sheet</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -292,7 +362,7 @@
   <!-- pinned image band — revealed as .page scrolls up over it -->
   <div class="footer-mark" id="footerMark">
     <div class="footer-bg" id="footerBg">
-      <img src="assets/footer.jpg" alt="Hooga riders crossing the desert" />
+      <img src="assets/footer.jpg?v=2" alt="Hooga riders crossing the desert at sunset" />
       <div class="footer-overlay"></div>
     </div>
     <div class="container">
