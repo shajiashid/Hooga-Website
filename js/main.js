@@ -32,11 +32,23 @@
   panel.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
 
+  // accordion: expand/collapse a group (Models, Support…)
+  panel.querySelectorAll(".m-has-sub > .m-link").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".m-item");
+      const open = item.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+    });
+  });
+
   /* ---- Model switcher (M1S / M1R) ---- */
   const MODELS = {
-    M1S: { battery: "72v 70Ah", speed: "62 mph", range: "112 mi", power: "16kw" },
-    M1R: { battery: "84v 90Ah", speed: "75 mph", range: "134 mi", power: "21kw" },
+    M1S: { battery: "72v 70Ah", speed: "62 mph", range: "112 mi", power: "16kw",
+           name: "the M1S", kicker: "The agile electric trail bike" },
+    M1R: { battery: "84v 90Ah", speed: "75 mph", range: "134 mi", power: "21kw",
+           name: "the M1R", kicker: "The flagship — more power, more range" },
   };
+  const SPEC_KEYS = ["battery", "speed", "range", "power"];
   const segBtns = document.querySelectorAll(".seg-btn");
   const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -72,6 +84,9 @@
       animateSpec(el, value, el.textContent, 700)
     );
   }
+  const heroName = document.getElementById("heroModelName");
+  const heroKicker = document.getElementById("heroKicker");
+  const heroCenter = document.querySelector(".hero-center");
   function selectModel(key) {
     const m = MODELS[key];
     if (!m) return;
@@ -80,7 +95,22 @@
       b.classList.toggle("active", active);
       b.setAttribute("aria-selected", String(active));
     });
-    Object.keys(m).forEach((k) => setSpec(k, m[k]));
+    SPEC_KEYS.forEach((k) => setSpec(k, m[k]));
+    // swap hero image (crossfade + subtle zoom)
+    document.querySelectorAll(".hero-img").forEach((img) =>
+      img.classList.toggle("active", img.dataset.model === key)
+    );
+    // smooth text swap: fade out -> change -> fade in
+    const swapText = () => {
+      if (heroName) heroName.textContent = m.name;
+      if (heroKicker) heroKicker.textContent = m.kicker;
+    };
+    if (heroCenter && !prefersReduce) {
+      heroCenter.classList.add("switching");
+      setTimeout(() => { swapText(); heroCenter.classList.remove("switching"); }, 260);
+    } else {
+      swapText();
+    }
     const sel = document.getElementById("model");
     if (sel) sel.value = key;
   }
@@ -101,9 +131,8 @@
     specIO.observe(specsSection);
   }
 
-  /* ---- Statement paragraph: prepare word-by-word rise (revealed after the title) ---- */
+  /* ---- Statement paragraph: prepare word-by-word rise (scroll-linked with the title) ---- */
   const stBody = document.querySelector(".statement-body");
-  let revealBody = () => {};
   if (stBody) {
     const words = stBody.textContent.trim().split(/\s+/);
     stBody.textContent = "";
@@ -116,9 +145,7 @@
       return s;
     });
     if (!prefersReduce) spans.forEach((s, i) => (s.style.transitionDelay = i * 14 + "ms"));
-    let bodyDone = false;
-    revealBody = () => { if (!bodyDone) { bodyDone = true; stBody.classList.add("in"); } };
-    if (prefersReduce) revealBody();
+    if (prefersReduce) stBody.classList.add("in");
   }
 
   /* ---- Statement title: scroll-linked reveal (Built Different first, then Proven Everywhere, then the paragraph) ---- */
@@ -150,7 +177,9 @@
         w.style.opacity = o.toFixed(3);
         w.style.transform = "translateY(" + (0.34 * (1 - o)).toFixed(3) + "em)";
       });
-      if (p >= 0.84) revealBody(); // beat 3: description floats in once both lines are shown
+      // beat 3: description reveals once both lines are shown — scroll-linked so it
+      // re-hides/re-reveals in sync with the title on every pass (no mismatch on re-scroll)
+      if (stBody) stBody.classList.toggle("in", p >= 0.84);
     };
     const onScrollSt = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     window.addEventListener("scroll", onScrollSt, { passive: true });
@@ -158,7 +187,7 @@
     update();
   } else {
     stWords.forEach((w) => { w.style.opacity = "1"; w.style.transform = "none"; });
-    revealBody();
+    if (stBody) stBody.classList.add("in");
   }
 
   /* ---- Reveal on scroll ---- */
@@ -182,24 +211,29 @@
     revealEls.forEach((el) => el.classList.add("in"));
   }
 
-  /* ---- Gallery: scroll-driven horizontal cards (vertical scroll -> cards slide left) ---- */
+  /* ---- Feature cards: scroll-driven horizontal scroll (vertical scroll -> cards slide left) ---- */
   const gPin = document.getElementById("galleryPin");
   const gTrack = document.getElementById("galleryTrack");
   const gViewport = document.getElementById("galleryViewport");
   if (gPin && gTrack && gViewport) {
+    const gSticky = document.querySelector(".gallery-sticky");
     const desktop = () => window.matchMedia("(min-width: 768px)").matches && !prefersReduce;
-    let maxX = 0;
+    let maxX = 0, topOff = 0;
     const measure = () => {
-      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; maxX = 0; return; }
+      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; if (gSticky) gSticky.style.top = ""; maxX = 0; return; }
       maxX = Math.max(0, gTrack.scrollWidth - gViewport.clientWidth);
-      gPin.style.height = window.innerHeight + maxX + "px"; // vertical scroll distance == horizontal travel
+      // Pin only as tall as the cards (not the whole viewport) so the exit after the
+      // last card is short; keep the cards vertically centred with a computed offset.
+      const stickyH = gSticky ? gSticky.offsetHeight : window.innerHeight;
+      topOff = Math.max(0, (window.innerHeight - stickyH) / 2);
+      if (gSticky) gSticky.style.top = topOff + "px";
+      gPin.style.height = stickyH + maxX + "px"; // vertical scroll distance == horizontal travel
     };
     let ticking = false;
     const update = () => {
       ticking = false;
       if (maxX <= 0) return;
-      const dist = gPin.offsetHeight - window.innerHeight;
-      const p = Math.min(Math.max(-gPin.getBoundingClientRect().top / dist, 0), 1);
+      const p = Math.min(Math.max((topOff - gPin.getBoundingClientRect().top) / maxX, 0), 1);
       gTrack.style.transform = "translate3d(" + (-p * maxX).toFixed(1) + "px,0,0)";
     };
     const onScrollG = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
@@ -209,6 +243,11 @@
     let rsz;
     window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { measure(); update(); }, 150); }, { passive: true });
   }
+
+  /* ---- Comparison: accordion sections ---- */
+  document.querySelectorAll(".cmp-sec-hd").forEach((hd) => {
+    hd.addEventListener("click", () => hd.closest(".cmp-sec").classList.toggle("closed"));
+  });
 
   /* ---- Play buttons -> toast (hero + menu "Our story") ---- */
   const play = document.getElementById("heroPlay");

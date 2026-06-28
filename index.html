@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=6" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23111'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Arial'%3EH%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
@@ -27,40 +27,45 @@
     </div>
   </header>
 
-  <!-- ===== Menu panel (sunday-style dropdown) ===== -->
+  <!-- ===== Menu panel (dark, large links + accordion) ===== -->
   <div class="menu-backdrop" id="menuBackdrop"></div>
   <div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="menu-top">
-      <span class="menu-mark" aria-hidden="true">H</span>
-      <img class="menu-word" src="assets/hooga-logo.png" alt="Hooga" />
+      <a href="#top" class="menu-word-link" aria-label="Hooga home"><img class="menu-word" src="assets/hooga-logo.png" alt="Hooga" /></a>
       <button class="menu-close" id="menuClose" aria-label="Close menu">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </div>
 
-    <div class="menu-body">
-      <nav class="menu-nav" aria-label="Main">
-        <a href="#models">Models</a>
-        <a href="#specs">Technology</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#compare">Comparison</a>
-        <a href="#dimensions">Dimensions</a>
-      </nav>
+    <nav class="menu-nav" aria-label="Main">
+      <div class="m-item m-has-sub">
+        <button class="m-link" type="button" aria-expanded="false">Models
+          <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="m-sub"><div class="m-sub-inner">
+          <a href="#models">Hooga M1S</a>
+          <a href="#models">Hooga M1R</a>
+          <a href="#compare">Compare</a>
+        </div></div>
+      </div>
 
-      <button class="menu-media" id="menuStory" type="button" aria-label="Watch our story">
-        <img src="assets/riders.jpg" alt="" />
-        <span class="menu-play">
-          <span class="menu-play-ic"><svg viewBox="0 0 24 24" width="12" height="12"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
-          Our story
-        </span>
-      </button>
-    </div>
+      <a class="m-link" href="#gallery">Technology</a>
+      <a class="m-link" href="#gallery">Our Story</a>
 
-    <div class="menu-foot">
-      <span>Electric trail motorcycles</span>
-      <span>Launching 2026</span>
-      <a href="#compare" class="menu-foot-cta">Founding Riders <i>★</i></a>
-    </div>
+      <div class="m-item m-has-sub">
+        <button class="m-link" type="button" aria-expanded="false">Support
+          <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="m-sub"><div class="m-sub-inner">
+          <a href="#">Support Centre</a>
+          <a href="#">Technical &amp; Tutorial</a>
+          <a href="#">Contact</a>
+        </div></div>
+      </div>
+
+      <a class="m-link" href="#">Become a Dealer</a>
+      <a class="m-link" href="#">Careers</a>
+    </nav>
   </div>
 
   <main id="top">
@@ -68,12 +73,15 @@
     <section class="hero">
       <div class="container container--bleed">
         <div class="hero-frame">
-          <img src="assets/riders.jpg" alt="Two riders on Hooga electric trail bikes in the desert" />
+          <div class="hero-imgs">
+            <img class="hero-img active" data-model="M1S" src="assets/model-m1s.jpg" alt="Hooga M1S electric trail bike" />
+            <img class="hero-img" data-model="M1R" src="assets/model-m1r.jpg?v=3" alt="Hooga M1R electric trail bike" loading="lazy" />
+          </div>
           <div class="hero-grad"></div>
 
           <div class="hero-center">
-            <p class="hero-kicker">The all-electric trail bike<br />Reserving now · late 2026</p>
-            <h1 class="hero-title">Say hello to Hooga</h1>
+            <p class="hero-kicker" id="heroKicker">The agile electric trail bike</p>
+            <h1 class="hero-title">Say hello to <span id="heroModelName">the M1S</span></h1>
           </div>
 
           <div class="seg" role="tablist" aria-label="Choose a model">
@@ -90,27 +98,6 @@
       </div>
     </section>
 
-    <!-- ===== Spec bar ===== -->
-    <section class="specs" id="specs">
-      <div class="container container--bleed specs-grid">
-        <div class="spec">
-          <span class="spec-label">Battery Capacity</span>
-          <span class="spec-value" data-spec="battery">72v 70Ah</span>
-        </div>
-        <div class="spec">
-          <span class="spec-label">Top Speed</span>
-          <span class="spec-value" data-spec="speed">62 mph</span>
-        </div>
-        <div class="spec">
-          <span class="spec-label">Max Range</span>
-          <span class="spec-value" data-spec="range">112 mi</span>
-        </div>
-        <div class="spec">
-          <span class="spec-label">Motor Power</span>
-          <span class="spec-value" data-spec="power">16kw</span>
-        </div>
-      </div>
-    </section>
 
     <!-- ===== Statement (scroll-linked word reveal) ===== -->
     <section class="statement" id="models">
@@ -121,77 +108,66 @@
               <span class="line line-1"><span class="word">Built</span> <span class="word">Different.</span></span>
               <span class="line line-2"><span class="word">Proven</span> <span class="word">Everywhere.</span></span>
             </h2>
-            <p class="statement-body">
-              Engineered from a clean sheet, Hooga doesn't just keep up with the machines that
-              came before it — it rethinks what a trail motorcycle can be, and does more than any
-              bike that has come before it.
-            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===== Gallery: scroll-driven horizontal cards (sunday-style) ===== -->
+    <!-- ===== Feature cards: scroll-driven horizontal scroller ===== -->
     <section class="gallery" id="gallery">
       <div class="gallery-pin" id="galleryPin">
         <div class="gallery-sticky">
-          <div class="container gallery-head" data-reveal>
+          <div class="container container--bleed gallery-head" data-reveal>
             <p class="eyebrow">In its element</p>
             <h2>Designed for real riding.</h2>
           </div>
           <div class="gallery-viewport" id="galleryViewport">
             <div class="gallery-track" id="galleryTrack">
-              <article class="card card-dark">
-                <img src="assets/helmet.jpg" alt="Hooga on a forest trail" loading="lazy" />
-                <div class="card-text">
-                  <h3>Built for the wild</h3>
-                  <p>A liquid-cooled motor and structural battery let Hooga take on hard trails
-                    the moment the pavement ends — no warm-up, no compromise.</p>
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>16 kW Peak Power</h3>
+                  <p>A compact mid-mount motor delivers 16 kW of peak power — instant electric torque the moment you twist the throttle.</p>
                 </div>
               </article>
 
-              <article class="card card-cream">
-                <div class="card-text">
-                  <h3>Stable at any speed</h3>
-                  <p>A low centre of gravity, a long stable wheelbase, and a lightweight frame keep
-                    you planted and confident from the first metre.</p>
-                </div>
-                <img src="assets/detail1.jpg" alt="Studio profile of the frame" loading="lazy" />
-              </article>
-
-              <article class="card card-dark">
-                <img src="assets/moto.jpg" alt="Hooga at night in the city" loading="lazy" />
-                <div class="card-text">
-                  <h3>Ready after dark</h3>
-                  <p>Full-LED adaptive lighting and a silent drivetrain make every late ride feel
-                    like the road was built just for you.</p>
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>0–60 mph in 5.6 Seconds</h3>
+                  <p>Smooth, gearless acceleration pulls from a standstill to 60 mph in just 5.6 seconds, with no shift to break the surge.</p>
                 </div>
               </article>
 
-              <article class="card card-dark">
-                <img src="assets/ride2.jpg" alt="Customisable Hooga" loading="lazy" />
-                <div class="card-text">
-                  <h3>Tailored to you</h3>
-                  <p>Choose from a curated selection of colourways and ride modes, then fine-tune
-                    the throttle map to match exactly how you ride.</p>
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>112 mi Max Range</h3>
+                  <p>A high-density battery stretches every charge up to 112 miles, keeping longer trails and daily commutes well within reach.</p>
                 </div>
               </article>
 
-              <article class="card card-dark">
-                <img src="assets/riders.jpg" alt="Riders on the trail" loading="lazy" />
-                <div class="card-text">
-                  <h3>Track to trail</h3>
-                  <p>Swap ride modes and seat geometry in seconds — one machine that's just as
-                    at home on the track as it is deep in the dirt.</p>
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>240mm KKE Fork Travel</h3>
+                  <p>Premium KKE forks soak up ruts and drops with 240mm of plush travel, keeping the front wheel planted over rough ground.</p>
                 </div>
               </article>
 
-              <article class="card card-dark">
-                <img src="assets/hero.jpg" alt="Charging the Hooga" loading="lazy" />
-                <div class="card-text">
-                  <h3>Charge anywhere</h3>
-                  <p>A full charge overnight from any wall outlet, and a fast-charge to 80% at
-                    the stops that matter — range anxiety, retired.</p>
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>Smart 4.0&quot; TFT Display</h3>
+                  <p>A crisp 4.0-inch TFT screen shows speed, range, and ride modes at a glance — clear and readable in bright sun or low light.</p>
+                </div>
+              </article>
+
+              <article class="fcard">
+                <div class="fcard-img"><img src="assets/card-placeholder.jpg" alt="Hooga M1 — image coming soon" loading="lazy" /></div>
+                <div class="fcard-text">
+                  <h3>DOT Hydraulic Dual-Piston Brakes</h3>
+                  <p>DOT-spec hydraulic dual-piston calipers bite hard and fade-free, for confident, repeatable stopping power on every descent.</p>
                 </div>
               </article>
             </div>
@@ -200,57 +176,92 @@
       </div>
     </section>
 
-    <!-- ===== Industry First ===== -->
-    <section class="firstly">
-      <div class="container narrow">
-        <h2 class="firstly-title" data-reveal>Industry First</h2>
-        <p class="firstly-body" data-reveal>
-          We've made the seat height so versatile, it defies all expectations. With up to a
-          900&nbsp;mm maximum seat height, achieved by spacing it up from the 845&nbsp;mm
-          configuration using our intuitively designed spacer, you can effortlessly convert
-          from track mode to trail mode in seconds. Allow yourself to take on hard trails or
-          enhance your riding posture, without limiting your confidence to keep your boots on
-          the ground.
-        </p>
-      </div>
-    </section>
-
-    <!-- ===== Founding band ===== -->
-    <section class="founding">
-      <div class="container">
-        <div class="founding-band" data-reveal>
-          <span class="fb-lead">Be one of our Founding Riders.</span>
-          <span class="fb-accent">Insider access. Exclusive perks. Design input.</span>
-          <a href="#compare" class="fb-pill">Beta program
-            <span class="fb-ic"><svg viewBox="0 0 24 24" width="13" height="13"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Comparison ===== -->
+    <!-- ===== Comparison (variants) ===== -->
     <section class="compare" id="compare">
-      <div class="container">
-        <h2 class="center-title" data-reveal>Comparison</h2>
-        <p class="center-sub" data-reveal>Two machines, one philosophy. Find the Hooga that matches your ride.</p>
+      <div class="cmp">
+        <div class="cmp-head">
+          <div class="cmp-brand"><span class="cmp-brand-label">Variants<br />comparison</span></div>
+          <div class="cmp-model"><div class="cmp-model-name">M1S</div><div class="cmp-model-tag">Standard</div></div>
+          <div class="cmp-model"><div class="cmp-model-name">M1R</div><div class="cmp-model-tag">Performance</div></div>
+        </div>
 
-        <div class="ctable" data-reveal>
-          <div class="ct-row ct-head">
-            <div class="ct-c ct-feat">Specification</div>
-            <div class="ct-c">M1S</div>
-            <div class="ct-c ct-hi">M1R<span class="flag">Flagship</span></div>
+        <div class="cmp-sections">
+          <!-- Powertrain -->
+          <div class="cmp-sec">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Powertrain</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Motor (Rated)</span><span class="cmp-val lo"><b>8</b> <span class="u">kW</span></span><span class="cmp-val"><b>12</b> <span class="u">kW</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Motor (Peak)</span><span class="cmp-val lo"><b>16</b> <span class="u">kW</span></span><span class="cmp-val"><b>28</b> <span class="u">kW</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Peak Torque</span><span class="cmp-val lo"><b>42</b> <span class="u">Nm</span></span><span class="cmp-val"><b>76</b> <span class="u">Nm</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Battery Capacity</span><span class="cmp-val lo"><b>3.0</b> <span class="u">kWh</span></span><span class="cmp-val"><b>5.4</b> <span class="u">kWh</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Battery Type</span><span class="cmp-val">Lithium-ion</span><span class="cmp-val">Lithium-ion</span></div>
+              <div class="cmp-row"><span class="cmp-label">Charger</span><span class="cmp-val">Standard</span><span class="cmp-val">Fast</span></div>
+              <div class="cmp-row"><span class="cmp-label">Charge Time (0–80%)</span><span class="cmp-val lo"><b>4.5</b> <span class="u">hrs</span></span><span class="cmp-val"><b>2.5</b> <span class="u">hrs</span></span></div>
+            </div></div>
           </div>
-          <div class="ct-row"><div class="ct-c ct-feat">Top speed</div><div class="ct-c mono">62 mph</div><div class="ct-c ct-hi mono">75 mph</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">Max range</div><div class="ct-c mono">112 mi</div><div class="ct-c ct-hi mono">134 mi</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">Battery</div><div class="ct-c mono">72v 70Ah</div><div class="ct-c ct-hi mono">84v 90Ah</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">Peak power</div><div class="ct-c mono">16kw</div><div class="ct-c ct-hi mono">21kw</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">0–60 mph</div><div class="ct-c mono">4.1 s</div><div class="ct-c ct-hi mono">3.2 s</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">Fast charge 20–80%</div><div class="ct-c mono">45 min</div><div class="ct-c ct-hi mono">35 min</div></div>
-          <div class="ct-row"><div class="ct-c ct-feat">Starting price</div><div class="ct-c mono">$8,900</div><div class="ct-c ct-hi mono">$11,400</div></div>
-          <div class="ct-row ct-act">
-            <div class="ct-c ct-feat"></div>
-            <div class="ct-c"><a href="#compare" class="btn btn-ghost">Reserve M1S</a></div>
-            <div class="ct-c ct-hi"><a href="#compare" class="btn btn-dark">Reserve M1R</a></div>
+
+          <!-- Performance -->
+          <div class="cmp-sec">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Performance</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Top Speed</span><span class="cmp-val lo"><b>80</b> <span class="u">km/h</span></span><span class="cmp-val"><b>120</b> <span class="u">km/h</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">0–60 km/h</span><span class="cmp-val lo"><b>4.8</b> <span class="u">sec</span></span><span class="cmp-val"><b>2.9</b> <span class="u">sec</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Range (City)</span><span class="cmp-val lo"><b>80</b> <span class="u">km</span></span><span class="cmp-val"><b>130</b> <span class="u">km</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Range (Off-road)</span><span class="cmp-val lo"><b>55</b> <span class="u">km</span></span><span class="cmp-val"><b>90</b> <span class="u">km</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Riding Modes</span><span class="cmp-val lo"><b>2</b> <span class="u">modes</span></span><span class="cmp-val"><b>4</b> <span class="u">modes</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Regenerative Braking</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Traction Control</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+            </div></div>
+          </div>
+
+          <!-- Transmission -->
+          <div class="cmp-sec closed">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Transmission</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Gearbox</span><span class="cmp-val">Single Speed</span><span class="cmp-val">Single Speed</span></div>
+              <div class="cmp-row"><span class="cmp-label">Drive System</span><span class="cmp-val">Chain Drive</span><span class="cmp-val">Chain Drive</span></div>
+              <div class="cmp-row"><span class="cmp-label">Front Sprocket</span><span class="cmp-val"><b>13</b> <span class="u">T</span></span><span class="cmp-val"><b>14</b> <span class="u">T</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Rear Sprocket</span><span class="cmp-val"><b>42</b> <span class="u">T</span></span><span class="cmp-val"><b>38</b> <span class="u">T</span></span></div>
+            </div></div>
+          </div>
+
+          <!-- Wheels / Tyres / Brakes -->
+          <div class="cmp-sec closed">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Wheels / Tyres / Brakes</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Front Wheel</span><span class="cmp-val"><b>21</b> <span class="u">inch</span></span><span class="cmp-val"><b>21</b> <span class="u">inch</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Rear Wheel</span><span class="cmp-val"><b>18</b> <span class="u">inch</span></span><span class="cmp-val"><b>18</b> <span class="u">inch</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Front Tyre</span><span class="cmp-val">80/100-21</span><span class="cmp-val">80/100-21</span></div>
+              <div class="cmp-row"><span class="cmp-label">Rear Tyre</span><span class="cmp-val">110/100-18</span><span class="cmp-val">110/100-18</span></div>
+              <div class="cmp-row"><span class="cmp-label">Front Brake</span><span class="cmp-val"><b>260</b> <span class="u">mm Disc</span></span><span class="cmp-val"><b>260</b> <span class="u">mm Disc</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Rear Brake</span><span class="cmp-val"><b>220</b> <span class="u">mm Disc</span></span><span class="cmp-val"><b>220</b> <span class="u">mm Disc</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Front Suspension</span><span class="cmp-val lo">WP XACT <span class="u">43mm</span></span><span class="cmp-val">WP XACT <span class="u">48mm</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Rear Suspension</span><span class="cmp-val">WP XACT Mono</span><span class="cmp-val">WP XACT Mono <span class="u">Pro</span></span></div>
+            </div></div>
+          </div>
+
+          <!-- Dimensions & Weight -->
+          <div class="cmp-sec closed">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Dimensions &amp; Weight</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Kerb Weight</span><span class="cmp-val lo"><b>112</b> <span class="u">kg</span></span><span class="cmp-val"><b>124</b> <span class="u">kg</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Seat Height</span><span class="cmp-val"><b>895</b> <span class="u">mm</span></span><span class="cmp-val"><b>895</b> <span class="u">mm</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Ground Clearance</span><span class="cmp-val lo"><b>320</b> <span class="u">mm</span></span><span class="cmp-val"><b>340</b> <span class="u">mm</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Wheelbase</span><span class="cmp-val"><b>1460</b> <span class="u">mm</span></span><span class="cmp-val"><b>1460</b> <span class="u">mm</span></span></div>
+            </div></div>
+          </div>
+
+          <!-- Features -->
+          <div class="cmp-sec closed">
+            <div class="cmp-sec-hd"><span class="cmp-sec-title">Features</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
+            <div class="cmp-sec-body"><div class="cmp-sec-inner">
+              <div class="cmp-row"><span class="cmp-label">Display</span><span class="cmp-val lo">LCD</span><span class="cmp-val">TFT Color</span></div>
+              <div class="cmp-row"><span class="cmp-label">Bluetooth</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">GPS / Navigation</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">OTA Updates</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">Immobiliser</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+              <div class="cmp-row"><span class="cmp-label">LED Lighting</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
+            </div></div>
           </div>
         </div>
       </div>
@@ -303,7 +314,7 @@
           <span class="foot-logo" aria-hidden="true">H</span>
           <a href="#top">About</a>
           <a href="#models">Models</a>
-          <a href="#specs">Technology</a>
+          <a href="#gallery">Technology</a>
           <a href="#gallery">Press</a>
           <a href="#compare">Reserve</a>
         </nav>
@@ -333,7 +344,7 @@
             <li><a href="#models">Hooga M1S</a></li>
             <li><a href="#models">Hooga M1R</a></li>
             <li><a href="#compare">Compare</a></li>
-            <li><a href="#specs">Technology</a></li>
+            <li><a href="#gallery">Technology</a></li>
             <li><a href="#dimensions">Dimensions</a></li>
           </ul>
 
@@ -366,9 +377,9 @@
       <div class="footer-overlay"></div>
     </div>
     <div class="container">
-      <svg class="bigmark" viewBox="0 0 1000 112" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hooga Motors">
-        <text x="0" y="88" textLength="1000" lengthAdjust="spacingAndGlyphs" font-family="Inter, system-ui, sans-serif" font-size="100" fill="#fff">
-          <tspan font-weight="700">HOOGA</tspan><tspan font-weight="400">MOTORS</tspan><tspan font-weight="400" fill="rgba(255,255,255,0.82)">&#160;&#160;|&#160;&#160;H</tspan>
+      <svg class="bigmark" viewBox="0 0 799 112" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hooga Motors">
+        <text x="399.5" y="88" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="100" fill="#fff">
+          <tspan font-weight="700">HOOGA</tspan><tspan font-weight="300">MOTORS</tspan>
         </text>
       </svg>
     </div>
@@ -378,6 +389,6 @@
   <!-- play toast -->
   <div class="toast" id="toast">Film coming soon 🎬</div>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=4"></script>
 </body>
 </html>
