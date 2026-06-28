@@ -220,13 +220,21 @@
     const desktop = () => window.matchMedia("(min-width: 768px)").matches && !prefersReduce;
     let maxX = 0, topOff = 0;
     const measure = () => {
-      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; if (gSticky) gSticky.style.top = ""; maxX = 0; return; }
+      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; if (gSticky) { gSticky.style.top = ""; gSticky.style.height = ""; } maxX = 0; return; }
       maxX = Math.max(0, gTrack.scrollWidth - gViewport.clientWidth);
-      // Pin only as tall as the cards (not the whole viewport) so the exit after the
-      // last card is short; keep the cards vertically centred with a computed offset.
-      const stickyH = gSticky ? gSticky.offsetHeight : window.innerHeight;
-      topOff = Math.max(0, (window.innerHeight - stickyH) / 2);
-      if (gSticky) gSticky.style.top = topOff + "px";
+      // Pin only as tall as the cards, but NEVER taller than the viewport, so the
+      // exit after the last card is short and never exceeds one screen. Keep the
+      // cards vertically centred with a computed offset.
+      let stickyH = window.innerHeight;
+      if (gSticky) {
+        gSticky.style.height = "auto";
+        stickyH = Math.min(gSticky.offsetHeight, window.innerHeight);
+        gSticky.style.height = stickyH + "px";
+        topOff = Math.max(0, (window.innerHeight - stickyH) / 2);
+        gSticky.style.top = topOff + "px";
+      } else {
+        topOff = 0;
+      }
       gPin.style.height = stickyH + maxX + "px"; // vertical scroll distance == horizontal travel
     };
     let ticking = false;
