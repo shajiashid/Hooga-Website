@@ -65,7 +65,7 @@ h1, h2, h3, h4 { font-weight: 400; line-height: 1.06; letter-spacing: -0.025em; 
   backdrop-filter: saturate(180%) blur(12px); transition: box-shadow 0.3s;
 }
 .header.scrolled { box-shadow: 0 1px 0 var(--line); }
-.header-inner { display: flex; align-items: center; justify-content: space-between; padding-top: 40px; padding-bottom: 32px; }
+.header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; padding-top: 40px; padding-bottom: 32px; }
 .menu-box {
   width: auto; height: auto; border: none; background: none; box-shadow: none; border-radius: 0;
   display: flex; flex-direction: column; gap: 6px; padding: 6px 2px;
@@ -187,6 +187,22 @@ a.m-link:hover, .m-item:hover > .m-link { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   .seg-btn.active::before { animation: none; opacity: 1; box-shadow: 0 0 5px 1px rgba(255,59,48,0.7); }
 }
+
+/* model switcher docked into the header — fades/slides in once the hero
+   switcher scrolls out of view, so the product can be changed across the page */
+.header-seg {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, calc(-50% + 9px));
+  display: inline-flex; gap: 0.25rem; padding: 0.3rem;
+  background: #efece6; border: 1px solid var(--line); border-radius: 999px;
+  opacity: 0; pointer-events: none; z-index: 2;
+  transition: opacity 0.4s var(--ease), transform 0.5s var(--ease);
+}
+.header.show-seg .header-seg { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+.header-seg .seg-btn { color: var(--ink-2); padding: 0.42rem 1.2rem; font-size: 0.82rem; }
+.header-seg .seg-btn:hover { color: var(--ink); }
+.header-seg .seg-btn.active { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+@media (max-width: 640px) { .header-seg { display: none; } }
 
 .hero-play {
   position: absolute; left: clamp(16px, 3vw, 28px); bottom: clamp(16px, 3vw, 28px);

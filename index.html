@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=9" />
+  <link rel="stylesheet" href="css/styles.css?v=10" />
 <style>
 /* ── Design tokens for new sections ── */
 :root {
@@ -324,6 +324,10 @@
       <button class="menu-box" id="menuBtn" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span>
       </button>
+      <div class="header-seg" id="headerSeg" role="tablist" aria-label="Choose a model">
+        <button class="seg-btn active" data-model="M1S" role="tab" aria-selected="true">M1S</button>
+        <button class="seg-btn" data-model="M1R" role="tab" aria-selected="false">M1R</button>
+      </div>
       <a href="#top" class="brand-logo" aria-label="Hooga home">
         <img src="assets/hooga-logo.png" alt="Hooga" />
       </a>
@@ -346,24 +350,15 @@
           <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="m-sub"><div class="m-sub-inner">
-          <a href="#models">Hooga M1S</a>
-          <a href="#models">Hooga M1R</a>
+          <a href="#top" data-model-select="M1S">Hooga M1S</a>
+          <a href="#top" data-model-select="M1R">Hooga M1R</a>
           <a href="#compare">Compare</a>
         </div></div>
       </div>
 
       <a class="m-link" href="#gallery">Our Story</a>
 
-      <div class="m-item m-has-sub">
-        <button class="m-link" type="button" aria-expanded="false">Support
-          <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="m-sub"><div class="m-sub-inner">
-          <a href="support.html">Support Centre</a>
-          <a href="support.html#faq">Technical &amp; Tutorial</a>
-          <a href="support.html#faq">Contact</a>
-        </div></div>
-      </div>
+      <a class="m-link" href="support.html">Support</a>
 
       <a class="m-link" href="#" data-deal-open>Become a Dealer</a>
       <a class="m-link" href="careers.html">Careers</a>
@@ -799,7 +794,7 @@
   <!-- play toast -->
   <div class="toast" id="toast">Film coming soon 🎬</div>
 
-  <script src="js/main.js?v=7"></script>
+  <script src="js/main.js?v=9"></script>
   <script src="js/dealer.js?v=1"></script>
 
   <!-- ── Floating CTA ── -->

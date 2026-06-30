@@ -123,6 +123,26 @@
   }
   segBtns.forEach((b) => b.addEventListener("click", () => selectModel(b.dataset.model)));
 
+  // Menu "Models" links select the model in the hero banner (and scroll to it via #top).
+  document.querySelectorAll("[data-model-select]").forEach((el) =>
+    el.addEventListener("click", () => selectModel(el.dataset.modelSelect))
+  );
+  // Deep link from other pages, e.g. index.html?model=M1R -> open the banner on that model.
+  const wantedModel = (new URLSearchParams(window.location.search).get("model") || "").toUpperCase();
+  if (MODELS[wantedModel]) selectModel(wantedModel);
+
+  // Dock the switcher into the header once the hero switcher scrolls out of view.
+  const heroSeg = document.querySelector(".hero .seg");
+  if (heroSeg && header && "IntersectionObserver" in window) {
+    const segIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const scrolledPast = !e.isIntersecting && e.boundingClientRect.top < 0;
+        header.classList.toggle("show-seg", scrolledPast);
+      });
+    }, { threshold: 0 });
+    segIO.observe(heroSeg);
+  }
+
   // Count up from 0 when the spec bar first scrolls into view.
   const specsSection = document.getElementById("specs");
   if (specsSection && "IntersectionObserver" in window && !prefersReduce) {
