@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.classList.add('js');</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="description" content="Careers at Hooga — help build the all-electric trail motorcycle. Browse open roles in engineering, design, product, operations and more." />
+  <title>Careers — Hooga Motors</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=9" />
+<style>
+  :root { --font-ui2: 'Nunito Sans', 'Inter', Arial, sans-serif; }
+
+  /* ===== Careers hero ===== */
+  .cr-hero { padding: clamp(56px, 9vw, 130px) 0 clamp(32px, 5vw, 64px); }
+  .cr-eyebrow { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.78rem; color: var(--accent); margin-bottom: 1.3rem; }
+  .cr-title { font-size: clamp(2.6rem, 7.4vw, 6rem); font-weight: 400; letter-spacing: -0.035em; line-height: 0.98; max-width: 15ch; }
+  .cr-sub { margin-top: 1.6rem; font-size: clamp(1.05rem, 1.5vw, 1.3rem); color: var(--ink-2); max-width: 54ch; }
+  .cr-stats { display: flex; flex-wrap: wrap; gap: clamp(1.6rem, 4.5vw, 3.6rem); margin-top: clamp(2.2rem, 4vw, 3rem); }
+  .cr-stat .n { font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+  .cr-stat .l { margin-top: 0.5rem; font-size: 0.8rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* banner load-in */
+  .js .cr-eyebrow, .js .cr-title, .js .cr-sub, .js .cr-stats { opacity: 0; transform: translateY(18px); filter: blur(8px); }
+  body.loaded .cr-eyebrow, body.loaded .cr-title, body.loaded .cr-sub, body.loaded .cr-stats {
+    opacity: 1; transform: none; filter: blur(0);
+    transition: opacity 0.85s var(--ease), transform 0.85s var(--ease), filter 0.85s var(--ease);
+  }
+  body.loaded .cr-eyebrow { transition-delay: 0.05s; }
+  body.loaded .cr-title  { transition-delay: 0.16s; }
+  body.loaded .cr-sub    { transition-delay: 0.30s; }
+  body.loaded .cr-stats  { transition-delay: 0.42s; }
+
+  /* ===== Roles ===== */
+  .cr-roles { padding-bottom: clamp(64px, 11vw, 130px); }
+  .cr-bar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .cr-search { position: relative; flex: 1 1 280px; }
+  .cr-search input {
+    width: 100%; height: 52px; padding: 0 18px 0 46px;
+    border: 1px solid var(--line); border-radius: 999px;
+    font-family: var(--sans); font-size: 1rem; color: var(--ink); background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cr-search input::placeholder { color: var(--ink-3); }
+  .cr-search input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,17,0.06); }
+  .cr-search svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+  .cr-select {
+    height: 52px; padding: 0 42px 0 18px; border: 1px solid var(--line); border-radius: 999px;
+    font-family: var(--sans); font-size: 0.98rem; color: var(--ink); background: #fff; cursor: pointer;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+    transition: border-color 0.2s;
+  }
+  .cr-select:focus { outline: none; border-color: var(--ink); }
+  .cr-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .cr-chip {
+    font-family: var(--sans); font-size: 0.9rem; font-weight: 500;
+    padding: 0.5rem 1.05rem; border-radius: 999px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink-2); cursor: pointer;
+    transition: background 0.2s var(--ease), color 0.2s, border-color 0.2s, transform 0.2s var(--ease);
+  }
+  .cr-chip:hover { border-color: var(--ink); color: var(--ink); }
+  .cr-chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .cr-count { margin: 26px 0 16px; font-size: 0.88rem; color: var(--ink-3); letter-spacing: 0.02em; }
+
+  /* job cards */
+  .cr-list { display: flex; flex-direction: column; gap: 14px; }
+  .cr-job {
+    border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--ease);
+  }
+  .js .cr-job { animation: cr-rise 0.6s var(--ease) both; }
+  @keyframes cr-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .cr-job:hover { border-color: #dcdbd5; box-shadow: 0 22px 48px -30px rgba(0,0,0,0.28); }
+  .cr-job-hd { display: flex; align-items: center; gap: 18px; padding: clamp(18px, 2.4vw, 26px) clamp(20px, 2.6vw, 30px); cursor: pointer; }
+  .cr-job-hd:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: var(--radius-sm); }
+  .cr-job-main { flex: 1; min-width: 0; }
+  .cr-job-title { font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+  .cr-job-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 11px; }
+  .cr-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--ink-2); }
+  .cr-tag svg { color: var(--ink-3); flex: none; }
+  .cr-job-actions { display: flex; align-items: center; gap: 12px; flex: none; }
+  .cr-apply { font-size: 0.88rem; padding: 0.62rem 1.3rem; }
+  .cr-expand { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); color: var(--ink-2); display: grid; place-items: center; flex: none; transition: transform 0.4s var(--ease), background 0.2s, color 0.2s; }
+  .cr-job:hover .cr-expand { color: var(--ink); }
+  .cr-job.open .cr-expand { transform: rotate(180deg); background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .cr-job-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.42s var(--ease); }
+  .cr-job.open .cr-job-body { grid-template-rows: 1fr; }
+  .cr-job-body-inner { overflow: hidden; }
+  .cr-job-detail { padding: clamp(4px, 1vw, 8px) clamp(20px, 2.6vw, 30px) clamp(22px, 2.8vw, 30px); border-top: 1px solid var(--line); }
+  .cr-job-detail > p { color: var(--ink-2); font-size: 1.02rem; margin: 18px 0 4px; max-width: 70ch; }
+  .cr-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.4rem, 4vw, 3rem); margin: 22px 0 26px; }
+  .cr-job-detail h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3); margin-bottom: 12px; font-weight: 600; }
+  .cr-job-detail ul { list-style: none; display: grid; gap: 10px; }
+  .cr-job-detail li { position: relative; padding-left: 22px; font-size: 0.97rem; color: var(--ink); line-height: 1.5; }
+  .cr-job-detail li::before { content: ""; position: absolute; left: 4px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .cr-empty { text-align: center; padding: clamp(36px, 7vw, 70px) 20px; border: 1px dashed var(--line); border-radius: var(--radius-sm); }
+  .cr-empty p { color: var(--ink-2); margin-bottom: 22px; font-size: 1.05rem; }
+
+  /* general application banner */
+  .cr-general { margin-top: clamp(40px, 6vw, 64px); padding: clamp(28px, 4vw, 48px); border-radius: var(--radius); background: #F7E3D7; color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px; }
+  .cr-general h3 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 400; letter-spacing: -0.02em; }
+  .cr-general p { color: var(--ink-2); margin-top: 8px; max-width: 48ch; }
+  .cr-general .btn { background: var(--ink); color: #fff; }
+  .cr-general .btn:hover { background: #333; }
+
+  /* ===== Apply modal ===== */
+  .ap-overlay {
+    position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(10,9,9,0.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    opacity: 0; pointer-events: none; transition: opacity 0.24s ease;
+  }
+  .ap-overlay.open { opacity: 1; pointer-events: auto; }
+  .ap-modal {
+    background: #fff; border-radius: 20px; width: min(520px, 100%); max-height: calc(100vh - 40px); overflow-y: auto;
+    padding: clamp(24px, 4vw, 36px); position: relative;
+    transform: translateY(14px) scale(0.99); transition: transform 0.26s var(--ease);
+    box-shadow: 0 50px 120px -30px rgba(20,16,12,0.5);
+  }
+  .ap-overlay.open .ap-modal { transform: none; }
+  .ap-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .ap-kicker { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; color: var(--ink-3); }
+  .ap-role { font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 500; letter-spacing: -0.02em; margin-top: 6px; }
+  .ap-close { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink-2); cursor: pointer; display: grid; place-items: center; transition: background 0.2s, transform 0.3s var(--ease), color 0.2s; }
+  .ap-close:hover { color: var(--ink); transform: rotate(90deg); }
+  .ap-form { display: flex; flex-direction: column; gap: 14px; }
+  .ap-field { display: flex; flex-direction: column; gap: 6px; }
+  .ap-field label { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+  .ap-field label .opt { color: var(--ink-3); font-weight: 400; }
+  .ap-input, .ap-textarea {
+    width: 100%; padding: 11px 13px; border: 1px solid var(--line); border-radius: 10px;
+    font-family: var(--sans); font-size: 0.95rem; color: var(--ink); background: #fff; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .ap-input { height: 44px; }
+  .ap-textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+  .ap-input::placeholder, .ap-textarea::placeholder { color: var(--ink-3); }
+  .ap-input:focus, .ap-textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,17,0.07); }
+  .ap-input.invalid, .ap-textarea.invalid { border-color: #d23b2c; box-shadow: 0 0 0 3px rgba(210,59,44,0.12); }
+  .ap-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ap-formnote { font-size: 0.85rem; min-height: 1em; }
+  .ap-formnote.error { color: #d23b2c; }
+  .ap-submit { margin-top: 6px; height: 48px; }
+
+  .ap-success { text-align: center; padding: 14px 6px 6px; }
+  .ap-success .ap-check { width: 62px; height: 62px; margin: 0 auto 18px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; animation: ap-pop 0.5s var(--ease) both; }
+  @keyframes ap-pop { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  .ap-success h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .ap-success p { color: var(--ink-2); margin-bottom: 22px; }
+
+  @media (max-width: 720px) {
+    .cr-job-hd { flex-wrap: wrap; }
+    .cr-job-actions { width: 100%; justify-content: space-between; order: 3; }
+    .cr-detail-grid { grid-template-columns: 1fr; }
+    .ap-row { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js .cr-eyebrow, .js .cr-title, .js .cr-sub, .js .cr-stats, .js .cr-job { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  }
+</style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23111'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Arial'%3EH%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <div class="page" id="page">
+  <!-- ===== Header ===== -->
+  <header class="header" id="header">
+    <div class="container container--bleed header-inner">
+      <button class="menu-box" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+      <a href="index.html#top" class="brand-logo" aria-label="Hooga home">
+        <img src="assets/hooga-logo.png" alt="Hooga" />
+      </a>
+    </div>
+  </header>
+
+  <!-- ===== Menu panel ===== -->
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="menu-top">
+      <a href="index.html#top" class="menu-word-link" aria-label="Hooga home"><img class="menu-word" src="assets/hooga-logo.png" alt="Hooga" /></a>
+      <button class="menu-close" id="menuClose" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <nav class="menu-nav" aria-label="Main">
+      <div class="m-item m-has-sub">
+        <button class="m-link" type="button" aria-expanded="false">Models
+          <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="m-sub"><div class="m-sub-inner">
+          <a href="index.html#models">Hooga M1S</a>
+          <a href="index.html#models">Hooga M1R</a>
+          <a href="index.html#compare">Compare</a>
+        </div></div>
+      </div>
+
+      <a class="m-link" href="index.html#gallery">Our Story</a>
+
+      <div class="m-item m-has-sub">
+        <button class="m-link" type="button" aria-expanded="false">Support
+          <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="m-sub"><div class="m-sub-inner">
+          <a href="support.html">Support Centre</a>
+          <a href="support.html#faq">Technical &amp; Tutorial</a>
+          <a href="support.html#faq">Contact</a>
+        </div></div>
+      </div>
+
+      <a class="m-link" href="#" data-deal-open>Become a Dealer</a>
+      <a class="m-link" href="careers.html" aria-current="page">Careers</a>
+    </nav>
+  </div>
+
+  <main id="top">
+    <!-- ===== Hero ===== -->
+    <section class="cr-hero">
+      <div class="container">
+        <h1 class="cr-title">Build what moves the world forward.</h1>
+        <p class="cr-sub">We&rsquo;re a small team building all-electric trail motorcycles from a clean sheet — engineers, designers, and riders who care about the details. Come help us make something worth riding.</p>
+        <div class="cr-stats">
+          <div class="cr-stat"><div class="n" id="crStatRoles">9</div><div class="l">Open roles</div></div>
+          <div class="cr-stat"><div class="n">4</div><div class="l">Cities + Remote</div></div>
+          <div class="cr-stat"><div class="n">100%</div><div class="l">Electric</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Roles ===== -->
+    <section class="cr-roles" id="roles">
+      <div class="container">
+        <div class="cr-bar">
+          <div class="cr-search">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="crSearch" type="search" placeholder="Search roles, teams, locations…" aria-label="Search roles" />
+          </div>
+          <select class="cr-select" id="crLocation" aria-label="Filter by location"></select>
+        </div>
+        <div class="cr-chips" id="crChips" role="group" aria-label="Filter by team"></div>
+
+        <p class="cr-count" id="crCount" role="status" aria-live="polite"></p>
+        <div class="cr-list" id="crList"></div>
+
+        <div class="cr-general">
+          <div>
+            <h3>Don&rsquo;t see your role?</h3>
+            <p>We&rsquo;re always glad to meet people who care about great machines. Tell us what you&rsquo;d do here.</p>
+          </div>
+          <button class="btn" type="button" data-apply-general="General / Open application">Send a general application</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer" id="site-footer">
+    <div class="footer-body">
+      <div class="container">
+        <nav class="foot-nav" data-reveal aria-label="Footer">
+          <span class="foot-logo" aria-hidden="true">H</span>
+          <a href="index.html#top">About</a>
+          <a href="index.html#models">Models</a>
+          <a href="index.html#gallery">Technology</a>
+          <a href="careers.html">Careers</a>
+          <a href="index.html#compare">Reserve</a>
+        </nav>
+
+        <div class="foot-grid">
+          <div class="foot-about" data-reveal>
+            <p>Few machines belong both on the street and where the road ends. As an all-electric
+              trail brand engineered from a clean sheet, Hooga is built around great machines,
+              amazing rides, and the bright road before us.</p>
+            <div class="foot-social">
+              <a href="#" aria-label="Instagram @hooga">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
+                @hooga
+              </a>
+              <a href="#" aria-label="LinkedIn hooga">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 10v7M7 7.5v.01M11 17v-4a2 2 0 0 1 4 0v4M11 10v7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                hooga
+              </a>
+            </div>
+          </div>
+
+          <ul class="foot-list" data-reveal>
+            <li><a href="index.html#models">Hooga M1S</a></li>
+            <li><a href="index.html#models">Hooga M1R</a></li>
+            <li><a href="index.html#compare">Compare</a></li>
+            <li><a href="index.html#gallery">Technology</a></li>
+            <li><a href="index.html#dimensions">Dimensions</a></li>
+          </ul>
+
+          <ul class="foot-list" data-reveal>
+            <li><a href="careers.html">Careers</a></li>
+            <li><a href="#">Find a Dealer</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="#">Warranty</a></li>
+            <li><a href="#">Press Kit</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="container foot-legal" data-reveal>
+        <span>© <span id="year"></span> Hooga Motors, Inc.</span>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Sustainability &amp; Supply Chain Statement</a>
+        <a href="#">Patents</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Manage Cookies</a>
+      </div>
+    </div>
+  </footer>
+  </div><!-- /.page -->
+
+  <!-- pinned image band -->
+  <div class="footer-mark" id="footerMark">
+    <div class="footer-bg" id="footerBg">
+      <img src="assets/footer.jpg?v=3" alt="Two Hooga riders powering through the desert, kicking up dust" />
+      <div class="footer-overlay"></div>
+    </div>
+    <div class="container">
+      <svg class="bigmark" viewBox="0 0 799 112" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Hooga Motors">
+        <text x="399.5" y="88" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="100" fill="#fff">
+          <tspan font-weight="700">HOOGA</tspan><tspan font-weight="300">MOTORS</tspan>
+        </text>
+      </svg>
+    </div>
+  </div>
+  <div class="reveal-spacer" aria-hidden="true"></div>
+
+  <!-- ===== Apply modal ===== -->
+  <div class="ap-overlay" id="apOverlay" role="dialog" aria-modal="true" aria-label="Apply">
+    <div class="ap-modal">
+      <div class="ap-head">
+        <div>
+          <p class="ap-kicker">Applying for</p>
+          <h2 class="ap-role" id="apRole">Open application</h2>
+        </div>
+        <button class="ap-close" data-ap-close aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div id="apFormWrap">
+        <form class="ap-form" id="apForm" novalidate>
+          <div class="ap-field">
+            <label for="apName">Full name</label>
+            <input class="ap-input" id="apName" name="name" type="text" placeholder="Your full name" autocomplete="name" />
+          </div>
+          <div class="ap-row">
+            <div class="ap-field">
+              <label for="apEmail">Email</label>
+              <input class="ap-input" id="apEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="ap-field">
+              <label for="apPhone">Phone <span class="opt">(optional)</span></label>
+              <input class="ap-input" id="apPhone" name="phone" type="tel" placeholder="+91 00000 00000" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="ap-field">
+            <label for="apLink">Portfolio / LinkedIn / Resume URL <span class="opt">(optional)</span></label>
+            <input class="ap-input" id="apLink" name="link" type="url" placeholder="https://…" />
+          </div>
+          <div class="ap-field">
+            <label for="apWhy">Why Hooga? <span class="opt">(optional)</span></label>
+            <textarea class="ap-textarea" id="apWhy" name="why" placeholder="A few lines about what draws you to building electric trail bikes."></textarea>
+          </div>
+          <p class="ap-formnote" id="apNote" role="status" aria-live="polite"></p>
+          <button class="btn btn-dark btn-block ap-submit" type="submit">Submit application</button>
+        </form>
+      </div>
+
+      <div id="apSuccess" hidden>
+        <div class="ap-success">
+          <div class="ap-check">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <h3>Thanks, <span id="apSuccessName">there</span>!</h3>
+          <p>Your application is in. If it&rsquo;s a fit, our team will reach out by email.</p>
+          <button class="btn btn-ghost" data-ap-close type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Become a Dealer Modal ── -->
+  <div class="deal-overlay" id="dealOverlay" role="dialog" aria-modal="true" aria-label="Become a dealer">
+    <div class="deal-modal">
+      <div class="deal-head">
+        <h2 class="deal-title">Become a Hooga<br>dealer</h2>
+        <button class="deal-close" data-deal-close aria-label="Close">&#x2715;</button>
+      </div>
+      <form class="deal-form" id="dealForm" novalidate>
+        <div class="deal-field">
+          <label class="deal-label">Dealership / business name</label>
+          <input class="deal-input" name="business" type="text" placeholder="Your business name" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Contact person</label>
+          <input class="deal-input" name="name" type="text" placeholder="Your full name" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Email</label>
+          <input class="deal-input" name="email" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Contact Number</label>
+          <input class="deal-input" name="phone" type="tel" placeholder="+91 00000 00000" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">City</label>
+          <input class="deal-input" name="city" type="text" placeholder="City, State" />
+        </div>
+        <p class="deal-note" id="dealNote" role="status" aria-live="polite"></p>
+        <button class="deal-submit" type="submit">Submit application</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/careers.js?v=2"></script>
+  <script src="js/dealer.js?v=1"></script>
+</body>
+</html>

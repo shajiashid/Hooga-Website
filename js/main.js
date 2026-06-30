@@ -53,6 +53,13 @@
   const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
+  /* ---- Banner text load-in: reveal hero kicker + title once the page paints ---- */
+  const heroEl = document.querySelector(".hero");
+  if (heroEl) {
+    // Double rAF so the hidden initial state paints first, then the transition runs.
+    requestAnimationFrame(() => requestAnimationFrame(() => heroEl.classList.add("loaded")));
+  }
+
   // Smoothly count every number inside a value string, e.g. "72v 70Ah" -> "84v 90Ah".
   function animateSpec(el, toStr, fromStr, duration) {
     const numRe = /\d+(?:\.\d+)?/g;
@@ -218,9 +225,15 @@
   if (gPin && gTrack && gViewport) {
     const gSticky = document.querySelector(".gallery-sticky");
     const desktop = () => window.matchMedia("(min-width: 768px)").matches && !prefersReduce;
-    let maxX = 0, topOff = 0;
+    let maxX = 0, topOff = 0, bufferPx = 0;
+    let targetX = 0, currentX = 0, raf = 0, lastT = 0;
+
     const measure = () => {
-      if (!desktop()) { gPin.style.height = ""; gTrack.style.transform = ""; if (gSticky) { gSticky.style.top = ""; gSticky.style.height = ""; } maxX = 0; return; }
+      if (!desktop()) {
+        gPin.style.height = ""; gTrack.style.transform = "";
+        if (gSticky) { gSticky.style.top = ""; gSticky.style.height = ""; }
+        maxX = 0; targetX = currentX = 0; return;
+      }
       maxX = Math.max(0, gTrack.scrollWidth - gViewport.clientWidth);
       // Pin only as tall as the cards, but NEVER taller than the viewport, so the
       // exit after the last card is short and never exceeds one screen. Keep the
@@ -235,21 +248,45 @@
       } else {
         topOff = 0;
       }
-      gPin.style.height = stickyH + maxX + "px"; // vertical scroll distance == horizontal travel
+      // Tiny dwell AFTER the 6th card finishes: just enough to register that the
+      // last card landed, then it breaks cleanly into normal vertical scroll.
+      // Keep this small (~one soft scroll) so it never feels like extra travel.
+      bufferPx = Math.round(window.innerHeight * 0.08);
+      gPin.style.height = stickyH + maxX + bufferPx + "px";
     };
-    let ticking = false;
-    const update = () => {
-      ticking = false;
-      if (maxX <= 0) return;
+
+    // Map scroll position -> horizontal target. Progress reaches 1 exactly when the
+    // last card is fully in; the extra bufferPx of pin height below that is the hold.
+    const computeTarget = () => {
+      if (maxX <= 0) { targetX = 0; return; }
       const p = Math.min(Math.max((topOff - gPin.getBoundingClientRect().top) / maxX, 0), 1);
-      gTrack.style.transform = "translate3d(" + (-p * maxX).toFixed(1) + "px,0,0)";
+      targetX = -p * maxX;
     };
-    const onScrollG = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-    measure(); update();
+
+    // Continuous eased lerp toward the target -> buttery, momentum-like glide.
+    // Exponential smoothing keyed to elapsed time stays identical at 60Hz or 120Hz.
+    const render = (now) => {
+      if (!lastT) lastT = now;
+      const dt = Math.min(now - lastT, 50); lastT = now;
+      const diff = targetX - currentX;
+      if (Math.abs(diff) < 0.05) {
+        currentX = targetX;
+        gTrack.style.transform = "translate3d(" + currentX.toFixed(2) + "px,0,0)";
+        raf = 0; lastT = 0; return; // settled — stop the loop until the next scroll
+      }
+      currentX += diff * (1 - Math.exp(-10 * dt / 1000)); // lower lambda = silkier
+      gTrack.style.transform = "translate3d(" + currentX.toFixed(2) + "px,0,0)";
+      raf = requestAnimationFrame(render);
+    };
+    const kick = () => { if (!raf) { lastT = 0; raf = requestAnimationFrame(render); } };
+    const onScrollG = () => { computeTarget(); kick(); };
+
+    measure(); computeTarget(); currentX = targetX;
+    gTrack.style.transform = "translate3d(" + currentX.toFixed(2) + "px,0,0)";
     window.addEventListener("scroll", onScrollG, { passive: true });
-    window.addEventListener("load", () => { measure(); update(); });
+    window.addEventListener("load", () => { measure(); computeTarget(); kick(); });
     let rsz;
-    window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { measure(); update(); }, 150); }, { passive: true });
+    window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { measure(); computeTarget(); kick(); }, 150); }, { passive: true });
   }
 
   /* ---- Comparison: accordion sections ---- */

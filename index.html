@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -13,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=7" />
+  <link rel="stylesheet" href="css/styles.css?v=9" />
 <style>
 /* ── Design tokens for new sections ── */
 :root {
@@ -212,6 +213,25 @@
   background: #fff; color: #000;
 }
 .si-btn.on-light { background: #111; color: #fff; }
+/* line dirt-bike icon: lays out beside the label; stroke follows the text colour */
+.si-btn { display: inline-flex; align-items: center; gap: 9px; }
+.si-bike { display: inline-flex; flex: none; }
+.si-bike svg { width: 26px; height: 16px; display: block; overflow: visible; transform-origin: 21% 70%; animation: si-bike-in 0.55s var(--ease) both; }
+.si-bike .whl { transform-box: fill-box; transform-origin: center; }
+/* hover = the bike comes alive: wheels spin + a little wheelie hop */
+.si-btn:hover .si-bike svg { animation: si-bike-ride 0.9s ease-in-out infinite; }
+.si-btn:hover .si-bike .whl { animation: si-bike-spin 0.5s linear infinite; }
+@keyframes si-bike-in { 0% { opacity: 0; transform: translateX(-7px); } 60% { opacity: 1; } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes si-bike-spin { to { transform: rotate(360deg); } }
+@keyframes si-bike-ride {
+  0%   { transform: translateY(0) rotate(0deg); }
+  22%  { transform: translateY(-2px) rotate(-8deg); }
+  46%  { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .si-bike svg, .si-btn:hover .si-bike svg, .si-btn:hover .si-bike .whl { animation: none !important; }
+}
 
 /* ════ MODAL ════ */
 .si-overlay {
@@ -332,7 +352,6 @@
         </div></div>
       </div>
 
-      <a class="m-link" href="#gallery">Technology</a>
       <a class="m-link" href="#gallery">Our Story</a>
 
       <div class="m-item m-has-sub">
@@ -340,14 +359,14 @@
           <svg class="m-chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="m-sub"><div class="m-sub-inner">
-          <a href="#">Support Centre</a>
-          <a href="#">Technical &amp; Tutorial</a>
-          <a href="#">Contact</a>
+          <a href="support.html">Support Centre</a>
+          <a href="support.html#faq">Technical &amp; Tutorial</a>
+          <a href="support.html#faq">Contact</a>
         </div></div>
       </div>
 
-      <a class="m-link" href="#">Become a Dealer</a>
-      <a class="m-link" href="#">Careers</a>
+      <a class="m-link" href="#" data-deal-open>Become a Dealer</a>
+      <a class="m-link" href="careers.html">Careers</a>
     </nav>
   </div>
 
@@ -705,7 +724,7 @@
           <a href="#top">About</a>
           <a href="#models">Models</a>
           <a href="#gallery">Technology</a>
-          <a href="#gallery">Press</a>
+          <a href="careers.html">Careers</a>
           <a href="#compare">Reserve</a>
         </nav>
 
@@ -741,8 +760,9 @@
           <ul class="foot-list" data-reveal>
             <li><a href="#compare">Test Ride</a></li>
             <li><a href="#">Find a Dealer</a></li>
-            <li><a href="#">Support</a></li>
+            <li><a href="support.html">Support</a></li>
             <li><a href="#">Warranty</a></li>
+            <li><a href="careers.html">Careers</a></li>
             <li><a href="#">Press Kit</a></li>
           </ul>
         </div>
@@ -779,10 +799,27 @@
   <!-- play toast -->
   <div class="toast" id="toast">Film coming soon 🎬</div>
 
-  <script src="js/main.js?v=6"></script>
+  <script src="js/main.js?v=7"></script>
+  <script src="js/dealer.js?v=1"></script>
 
   <!-- ── Floating CTA ── -->
-  <button class="si-btn" id="siBtn">SHOW INTEREST</button>
+  <button class="si-btn" id="siBtn">
+    <span class="si-bike" aria-hidden="true">
+      <svg viewBox="0 0 48 30" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <g class="bike-body">
+          <path d="M14 12 L18 20 L27 20 L23 13 Z"/>
+          <path d="M10 21 L18 20"/>
+          <path d="M7 11 L14 12 L23 13"/>
+          <path d="M23 13 L29 10 L34 6 H37"/>
+          <path d="M29 10 L38 21"/>
+          <path d="M28 8 Q34 5 43 9"/>
+        </g>
+        <g class="whl whl-r"><circle cx="10" cy="21" r="7"/><circle cx="10" cy="21" r="3.6"/><path d="M10 17.4 V24.6 M6.4 21 H13.6"/></g>
+        <g class="whl whl-f"><circle cx="38" cy="21" r="7"/><circle cx="38" cy="21" r="3.6"/><path d="M38 17.4 V24.6 M34.4 21 H41.6"/></g>
+      </svg>
+    </span>
+    <span class="si-btn-label">SHOW INTEREST</span>
+  </button>
 
   <!-- ── Interest Modal ── -->
   <div class="si-overlay" id="siOverlay">
@@ -813,6 +850,40 @@
           <input class="si-input" type="text" inputmode="numeric" maxlength="6" placeholder="000000" />
         </div>
         <button class="si-submit" type="submit">Submit Interest</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Become a Dealer Modal ── -->
+  <div class="deal-overlay" id="dealOverlay" role="dialog" aria-modal="true" aria-label="Become a dealer">
+    <div class="deal-modal">
+      <div class="deal-head">
+        <h2 class="deal-title">Become a Hooga<br>dealer</h2>
+        <button class="deal-close" data-deal-close aria-label="Close">&#x2715;</button>
+      </div>
+      <form class="deal-form" id="dealForm" novalidate>
+        <div class="deal-field">
+          <label class="deal-label">Dealership / business name</label>
+          <input class="deal-input" name="business" type="text" placeholder="Your business name" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Contact person</label>
+          <input class="deal-input" name="name" type="text" placeholder="Your full name" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Email</label>
+          <input class="deal-input" name="email" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">Contact Number</label>
+          <input class="deal-input" name="phone" type="tel" placeholder="+91 00000 00000" />
+        </div>
+        <div class="deal-field">
+          <label class="deal-label">City</label>
+          <input class="deal-input" name="city" type="text" placeholder="City, State" />
+        </div>
+        <p class="deal-note" id="dealNote" role="status" aria-live="polite"></p>
+        <button class="deal-submit" type="submit">Submit application</button>
       </form>
     </div>
   </div>
@@ -874,6 +945,7 @@
   /* ── Floating CTA ── */
   (function() {
     var btn = document.getElementById('siBtn');
+    var labelEl = btn.querySelector('.si-btn-label');
     var overlay = document.getElementById('siOverlay');
     var closeBtn = document.getElementById('siClose');
     var comparison = document.querySelector('.new-comparison');
@@ -895,10 +967,10 @@
       }, 36);
     }
 
-    btn.addEventListener('mouseenter', function() { scramble(btn, LABEL); });
+    btn.addEventListener('mouseenter', function() { scramble(labelEl, LABEL); });
     btn.addEventListener('mouseleave', function() {
       if (scrambleIv) { clearInterval(scrambleIv); scrambleIv = null; }
-      btn.textContent = LABEL;
+      labelEl.textContent = LABEL;
     });
 
     if (comparison) {
