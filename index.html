@@ -12,7 +12,287 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css?v=7" />
+<style>
+/* ── Design tokens for new sections ── */
+:root {
+  --dim-red: #EE3B25;
+  --cmp-red: #E8251F;
+  --cmp-gray: #888888;
+  --cmp-border: #F0F0F0;
+  --cmp-label-w: 220px;
+  --cmp-pad-x: 32px;
+  --cmp-header-h: 140px;
+  --font-ui2: 'Nunito Sans', 'Inter', Arial, sans-serif;
+  --font-mono2: 'JetBrains Mono', monospace;
+}
+
+/* ════ DIMENSIONS ════ */
+.dimensions {
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  padding: 64px 0 0;
+}
+.dim-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+  font-family: var(--font-ui2);
+  margin-bottom: 32px;
+  letter-spacing: -0.02em;
+}
+.dim-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 70vh;
+}
+.dim-bike {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 76%; max-width: 1000px;
+  height: auto; display: block;
+  pointer-events: none; user-select: none;
+}
+.dim-dot {
+  position: absolute;
+  width: 22px; height: 22px;
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  z-index: 3; overflow: visible;
+}
+.dim-dot::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--dim-red);
+}
+.dim-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  background: var(--dim-red);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.dim-dot.active::before {
+  animation: dim-pulse 1.4s ease-out infinite;
+}
+@keyframes dim-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(238,59,37,0.5); }
+  70%  { box-shadow: 0 0 0 10px rgba(238,59,37,0); }
+  100% { box-shadow: 0 0 0 0 rgba(238,59,37,0); }
+}
+.dim-tip {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  left: calc(100% + 8px);
+  width: 300px;
+  background: #fff; border-radius: 8px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+  display: flex; flex-direction: row; align-items: stretch;
+  overflow: hidden;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 20; white-space: nowrap;
+}
+.dim-dot:hover .dim-tip,
+.dim-dot.auto-show .dim-tip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.dim-tip.left {
+  left: auto; right: calc(100% + 8px);
+  transform: translateY(-50%) translateX(-4px);
+}
+.dim-dot:hover .dim-tip.left,
+.dim-dot.auto-show .dim-tip.left {
+  transform: translateY(-50%) translateX(0);
+}
+.dim-tip-body {
+  flex: 1; padding: 20px 16px 20px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.dim-tip-stat { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.dim-tip-label { font-family: var(--font-ui2); font-size: 14px; color: #777; line-height: 1.2; }
+.dim-tip-value { font-family: var(--font-mono2); font-size: 20px; font-weight: 500; color: var(--dim-red); letter-spacing: -0.02em; line-height: 1.1; }
+.dim-tip-value .tu { font-size: 14px; font-weight: 400; margin-left: 5px; opacity: 0.85; }
+.dim-tip-img { width: 100px; flex-shrink: 0; overflow: hidden; }
+.dim-tip-img img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.dim-bar {
+  padding: 0 clamp(48px, 8%, 180px) 64px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.dim-bar-line { height: 1px; border-top: 1px dashed #363636; }
+.dim-bar-spec { display: flex; align-items: baseline; justify-content: space-between; }
+.dim-bar-label { font-family: var(--font-ui2); font-size: 14px; color: #787878; line-height: 1; }
+.dim-bar-value { font-family: var(--font-mono2); font-size: clamp(22px, 3vw, 32px); font-weight: 500; color: var(--dim-red); letter-spacing: -0.02em; line-height: 1; }
+.dim-bar-value .dim-unit { font-size: 0.6em; font-weight: 400; margin-left: 6px; opacity: 0.85; }
+
+/* ════ COMPARISON ════ */
+.new-comparison { position: relative; }
+.cmp-sticky-hd {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff;
+  height: var(--cmp-header-h);
+  display: grid;
+  grid-template-columns: var(--cmp-label-w) 1fr 1fr;
+  padding: 0 var(--cmp-pad-x);
+  border-bottom: 1px solid var(--cmp-border);
+}
+.cmp-sticky-brand {
+  display: flex; flex-direction: column; justify-content: center; gap: 7px; padding-right: 24px;
+}
+.cmp-sticky-brand img.cmp-logo {
+  height: 30px; width: auto; object-fit: contain; object-position: left center;
+}
+.cmp-logo-fallback { display: none; width: 110px; height: 28px; }
+.cmp-sticky-brand .cmp-sub { font-family: var(--font-ui2); font-size: 16px; font-weight: 600; color: #111; }
+.cmp-sticky-model {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  padding: 14px 16px; overflow: hidden;
+}
+.cmp-sticky-model .cmp-bike { height: 52px; width: auto; object-fit: contain; flex-shrink: 0; max-width: 68px; }
+.cmp-sticky-model .cmp-model-name { font-size: 50px; font-weight: 600; line-height: 1; letter-spacing: -0.04em; color: #111; }
+.cmp-sticky-model .cmp-model-tag { font-size: 16px; font-weight: 400; color: var(--cmp-gray); margin-top: 4px; }
+
+.new-sec { border-bottom: none; }
+.new-sec-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 var(--cmp-pad-x);
+  cursor: pointer; user-select: none;
+  background: #fff;
+  border-bottom: 1px solid var(--cmp-border);
+}
+.new-sec-title { font-size: 24px; font-weight: 600; line-height: 36px; letter-spacing: -0.04em; color: #111; }
+.new-chev svg { display: block; width: 18px; height: 18px; stroke: #111; stroke-width: 2; fill: none; transition: transform 0.28s ease; }
+.new-sec.closed .new-chev svg { transform: rotate(180deg); }
+.new-sec-body {
+  display: grid; grid-template-rows: 1fr;
+  transition: grid-template-rows 0.32s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+}
+.new-sec.closed .new-sec-body { grid-template-rows: 0fr; }
+.new-sec-inner { min-height: 0; }
+.new-row {
+  display: grid;
+  grid-template-columns: var(--cmp-label-w) 1fr 1fr;
+  align-items: center; min-height: 60px;
+  padding: 0 var(--cmp-pad-x); position: relative;
+}
+.new-sec-inner .new-row:last-child { border-bottom: 1px solid var(--cmp-border); }
+.new-row-label { font-size: 14px; font-weight: 400; color: #111; padding-right: 20px; }
+.new-row-val {
+  font-family: var(--font-mono2); font-size: 18px; font-weight: 400;
+  line-height: 36px; letter-spacing: -0.05em; color: #111;
+  display: flex; align-items: center; justify-content: center; gap: 3px; padding: 0 8px;
+}
+.new-row-val b { font-weight: 500; }
+.new-row-val .u { font-size: 18px; color: var(--cmp-gray); font-weight: 400; }
+.new-row-val.lo { color: var(--cmp-red); }
+.new-row-val.lo .u { color: var(--cmp-red); opacity: 0.85; }
+.new-row-val .icon-yes { color: #111; display: flex; }
+.new-row-val .icon-no  { color: #111; display: flex; }
+
+/* ════ FLOATING CTA ════ */
+.si-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 999;
+  height: 48px; padding: 0 24px; border: none; border-radius: 10px;
+  font-family: var(--font-ui2); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+  background: #fff; color: #000;
+}
+.si-btn.on-light { background: #111; color: #fff; }
+
+/* ════ MODAL ════ */
+.si-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.48);
+  backdrop-filter: blur(4px); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.22s ease;
+}
+.si-overlay.open { opacity: 1; pointer-events: auto; }
+.si-modal {
+  background: #fff; border-radius: 16px;
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); overflow-y: auto;
+  padding: 32px; position: relative;
+  transform: translateY(12px); transition: transform 0.22s ease;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.si-overlay.open .si-modal { transform: translateY(0); }
+.si-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.si-modal-title { font-family: var(--font-ui2); font-size: 20px; font-weight: 600; color: #111; line-height: 1.3; }
+.si-close { background: none; border: none; cursor: pointer; padding: 4px; color: #888; flex-shrink: 0; font-size: 20px; transition: color 0.15s; }
+.si-close:hover { color: #111; }
+.si-form { display: flex; flex-direction: column; gap: 14px; }
+.si-field { display: flex; flex-direction: column; gap: 6px; }
+.si-label { font-family: var(--font-ui2); font-size: 14px; font-weight: 500; color: #111; }
+.si-input {
+  height: 40px; padding: 0 12px;
+  border: 1px solid #e2e8f0; border-radius: 8px;
+  font-family: var(--font-ui2); font-size: 14px; color: #111;
+  background: #fff; outline: none; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.si-input::placeholder { color: #aaa; }
+.si-input:focus { border-color: #111; box-shadow: 0 0 0 2px rgba(17,17,17,0.1); }
+.si-submit {
+  height: 44px; width: 100%; background: #111; color: #fff;
+  border: none; border-radius: 8px;
+  font-family: var(--font-ui2); font-size: 14px; font-weight: 600;
+  letter-spacing: 0.04em; cursor: pointer; margin-top: 4px;
+  transition: background 0.15s;
+}
+.si-submit:hover { background: #333; }
+
+/* ════ RESPONSIVE ════ */
+@media (max-width: 900px) {
+  :root { --cmp-label-w: 160px; --cmp-pad-x: 20px; --cmp-header-h: 110px; }
+  .dimensions { padding: 48px 0 0; }
+  .dim-scene { aspect-ratio: 4/3; }
+  .dim-bike { width: 88%; }
+  .dim-bar { padding: 0 24px 48px; }
+  .cmp-sticky-model .cmp-model-name { font-size: 36px; }
+  .cmp-sticky-model .cmp-bike { height: 40px; max-width: 54px; }
+  .cmp-sticky-model .cmp-model-tag { font-size: 13px; }
+  .cmp-sticky-brand .cmp-sub { font-size: 13px; }
+  .new-sec-title { font-size: 20px; }
+  .new-row-val { font-size: 15px; }
+  .new-row-val .u { font-size: 15px; }
+  .new-row-label { font-size: 13px; }
+}
+@media (max-width: 600px) {
+  :root { --cmp-label-w: 130px; --cmp-pad-x: 16px; --cmp-header-h: 90px; }
+  .dimensions { padding: 36px 0 0; }
+  .dim-scene { aspect-ratio: 1/1; }
+  .dim-bike { width: 95%; }
+  .dim-bar { padding: 0 16px 40px; }
+  .cmp-sticky-hd { grid-template-columns: 100px 1fr 1fr; }
+  .cmp-sticky-brand { gap: 4px; }
+  .cmp-sticky-brand img.cmp-logo { height: 22px; }
+  .cmp-sticky-brand .cmp-sub { font-size: 11px; }
+  .cmp-sticky-model { gap: 8px; padding: 10px 8px; }
+  .cmp-sticky-model .cmp-bike { height: 34px; max-width: 44px; }
+  .cmp-sticky-model .cmp-model-name { font-size: 28px; }
+  .cmp-sticky-model .cmp-model-tag { font-size: 11px; margin-top: 2px; }
+  .new-sec-title { font-size: 18px; }
+  .new-sec-hd { height: 56px; }
+  .new-row-val { font-size: 13px; }
+  .new-row-val .u { font-size: 13px; }
+  .new-row-label { font-size: 12px; }
+  .new-row { min-height: 52px; }
+}
+</style>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23111'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Arial'%3EH%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
@@ -179,132 +459,239 @@
       </div>
     </section>
 
-    <!-- ===== Comparison (variants) ===== -->
-    <section class="compare" id="compare">
-      <div class="cmp">
-        <div class="cmp-head">
-          <div class="cmp-brand"><span class="cmp-brand-label">Variants<br />comparison</span></div>
-          <div class="cmp-model"><div class="cmp-model-name">M1S</div><div class="cmp-model-tag">Standard</div></div>
-          <div class="cmp-model"><div class="cmp-model-name">M1R</div><div class="cmp-model-tag">Performance</div></div>
-        </div>
+    <!-- ===== Dimensions (interactive hotspot) ===== -->
+    <section class="dimensions" id="dimensions">
+      <h2 class="dim-title">Dimensions</h2>
+      <div class="dim-scene">
+        <img class="dim-bike" src="assets/dim-bike.png" alt="M1S Side Profile" />
 
-        <div class="cmp-sections">
-          <!-- Powertrain -->
-          <div class="cmp-sec">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Powertrain</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Motor (Rated)</span><span class="cmp-val lo"><b>8</b> <span class="u">kW</span></span><span class="cmp-val"><b>12</b> <span class="u">kW</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Motor (Peak)</span><span class="cmp-val lo"><b>16</b> <span class="u">kW</span></span><span class="cmp-val"><b>28</b> <span class="u">kW</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Peak Torque</span><span class="cmp-val lo"><b>42</b> <span class="u">Nm</span></span><span class="cmp-val"><b>76</b> <span class="u">Nm</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Battery Capacity</span><span class="cmp-val lo"><b>3.0</b> <span class="u">kWh</span></span><span class="cmp-val"><b>5.4</b> <span class="u">kWh</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Battery Type</span><span class="cmp-val">Lithium-ion</span><span class="cmp-val">Lithium-ion</span></div>
-              <div class="cmp-row"><span class="cmp-label">Charger</span><span class="cmp-val">Standard</span><span class="cmp-val">Fast</span></div>
-              <div class="cmp-row"><span class="cmp-label">Charge Time (0–80%)</span><span class="cmp-val lo"><b>4.5</b> <span class="u">hrs</span></span><span class="cmp-val"><b>2.5</b> <span class="u">hrs</span></span></div>
-            </div></div>
-          </div>
-
-          <!-- Performance -->
-          <div class="cmp-sec">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Performance</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Top Speed</span><span class="cmp-val lo"><b>80</b> <span class="u">km/h</span></span><span class="cmp-val"><b>120</b> <span class="u">km/h</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">0–60 km/h</span><span class="cmp-val lo"><b>4.8</b> <span class="u">sec</span></span><span class="cmp-val"><b>2.9</b> <span class="u">sec</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Range (City)</span><span class="cmp-val lo"><b>80</b> <span class="u">km</span></span><span class="cmp-val"><b>130</b> <span class="u">km</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Range (Off-road)</span><span class="cmp-val lo"><b>55</b> <span class="u">km</span></span><span class="cmp-val"><b>90</b> <span class="u">km</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Riding Modes</span><span class="cmp-val lo"><b>2</b> <span class="u">modes</span></span><span class="cmp-val"><b>4</b> <span class="u">modes</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Regenerative Braking</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Traction Control</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-            </div></div>
-          </div>
-
-          <!-- Transmission -->
-          <div class="cmp-sec closed">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Transmission</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Gearbox</span><span class="cmp-val">Single Speed</span><span class="cmp-val">Single Speed</span></div>
-              <div class="cmp-row"><span class="cmp-label">Drive System</span><span class="cmp-val">Chain Drive</span><span class="cmp-val">Chain Drive</span></div>
-              <div class="cmp-row"><span class="cmp-label">Front Sprocket</span><span class="cmp-val"><b>13</b> <span class="u">T</span></span><span class="cmp-val"><b>14</b> <span class="u">T</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Rear Sprocket</span><span class="cmp-val"><b>42</b> <span class="u">T</span></span><span class="cmp-val"><b>38</b> <span class="u">T</span></span></div>
-            </div></div>
-          </div>
-
-          <!-- Wheels / Tyres / Brakes -->
-          <div class="cmp-sec closed">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Wheels / Tyres / Brakes</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Front Wheel</span><span class="cmp-val"><b>21</b> <span class="u">inch</span></span><span class="cmp-val"><b>21</b> <span class="u">inch</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Rear Wheel</span><span class="cmp-val"><b>18</b> <span class="u">inch</span></span><span class="cmp-val"><b>18</b> <span class="u">inch</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Front Tyre</span><span class="cmp-val">80/100-21</span><span class="cmp-val">80/100-21</span></div>
-              <div class="cmp-row"><span class="cmp-label">Rear Tyre</span><span class="cmp-val">110/100-18</span><span class="cmp-val">110/100-18</span></div>
-              <div class="cmp-row"><span class="cmp-label">Front Brake</span><span class="cmp-val"><b>260</b> <span class="u">mm Disc</span></span><span class="cmp-val"><b>260</b> <span class="u">mm Disc</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Rear Brake</span><span class="cmp-val"><b>220</b> <span class="u">mm Disc</span></span><span class="cmp-val"><b>220</b> <span class="u">mm Disc</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Front Suspension</span><span class="cmp-val lo">WP XACT <span class="u">43mm</span></span><span class="cmp-val">WP XACT <span class="u">48mm</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Rear Suspension</span><span class="cmp-val">WP XACT Mono</span><span class="cmp-val">WP XACT Mono <span class="u">Pro</span></span></div>
-            </div></div>
-          </div>
-
-          <!-- Dimensions & Weight -->
-          <div class="cmp-sec closed">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Dimensions &amp; Weight</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Kerb Weight</span><span class="cmp-val lo"><b>112</b> <span class="u">kg</span></span><span class="cmp-val"><b>124</b> <span class="u">kg</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Seat Height</span><span class="cmp-val"><b>895</b> <span class="u">mm</span></span><span class="cmp-val"><b>895</b> <span class="u">mm</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Ground Clearance</span><span class="cmp-val lo"><b>320</b> <span class="u">mm</span></span><span class="cmp-val"><b>340</b> <span class="u">mm</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Wheelbase</span><span class="cmp-val"><b>1460</b> <span class="u">mm</span></span><span class="cmp-val"><b>1460</b> <span class="u">mm</span></span></div>
-            </div></div>
-          </div>
-
-          <!-- Features -->
-          <div class="cmp-sec closed">
-            <div class="cmp-sec-hd"><span class="cmp-sec-title">Features</span><span class="cmp-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span></div>
-            <div class="cmp-sec-body"><div class="cmp-sec-inner">
-              <div class="cmp-row"><span class="cmp-label">Display</span><span class="cmp-val lo">LCD</span><span class="cmp-val">TFT Color</span></div>
-              <div class="cmp-row"><span class="cmp-label">Bluetooth</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">GPS / Navigation</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">OTA Updates</span><span class="cmp-val"><span class="cmp-no">✕</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">Immobiliser</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-              <div class="cmp-row"><span class="cmp-label">LED Lighting</span><span class="cmp-val"><span class="cmp-yes">✓</span></span><span class="cmp-val"><span class="cmp-yes">✓</span></span></div>
-            </div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Dimensions (split image + black panel) ===== -->
-    <section class="dims" id="dimensions">
-      <div class="container">
-        <div class="dim-split">
-          <div class="dim-photo" data-reveal>
-            <img src="assets/dimensions.jpg" alt="Hooga electric trail bike — side-profile concept sketch" loading="lazy" />
-          </div>
-
-          <div class="dim-panel" data-reveal>
-            <div class="dim-panel-head">
-              <p class="eyebrow">Every millimetre</p>
-              <h2>Dimensions</h2>
-              <p class="dim-lead">Engineered to disappear beneath you — every figure measured, nothing wasted.</p>
+        <!-- Handlebar -->
+        <button class="dim-dot" style="left:44%;top:13%" data-label="Handlebar Width" data-value="800" data-unit="mm">
+          <div class="dim-tip">
+            <div class="dim-tip-body">
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Handlebar Width</span>
+                <span class="dim-tip-value">800<span class="tu"> mm</span></span>
+              </div>
             </div>
-
-            <ul class="dim-list">
-              <li><span>Overall length</span><b>2,050 mm</b></li>
-              <li><span>Wheelbase</span><b>1,380 mm</b></li>
-              <li><span>Seat height</span><b>845–900 mm</b></li>
-              <li><span>Ground clearance</span><b>270 mm</b></li>
-              <li><span>Kerb weight</span><b>118 kg</b></li>
-              <li><span>Wheels (F / R)</span><b>21" / 18"</b></li>
-            </ul>
-
-            <a class="dim-cta" href="#" aria-label="Download the spec sheet, PDF">
-              <span class="dim-cta-tag">.pdf</span>
-              <span class="dim-cta-row">
-                <span>Download spec sheet</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-            </a>
+            <div class="dim-tip-img"><img src="assets/dim-tip-handlebar.png" alt="" /></div>
           </div>
+        </button>
+
+        <!-- Seat -->
+        <button class="dim-dot" style="left:58%;top:31%" data-label="Seat Height" data-value="845 – 900" data-unit="mm">
+          <div class="dim-tip">
+            <div class="dim-tip-body">
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Lower Seat Height</span>
+                <span class="dim-tip-value">845<span class="tu"> mm</span></span>
+              </div>
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Max Seat Height</span>
+                <span class="dim-tip-value">900<span class="tu"> mm</span></span>
+              </div>
+            </div>
+            <div class="dim-tip-img"><img src="assets/dim-tip-seat.png" alt="" /></div>
+          </div>
+        </button>
+
+        <!-- Ground clearance -->
+        <button class="dim-dot" style="left:51%;top:72%" data-label="Ground Clearance" data-value="300" data-unit="mm">
+          <div class="dim-tip">
+            <div class="dim-tip-body">
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Ground Clearance</span>
+                <span class="dim-tip-value">300<span class="tu"> mm</span></span>
+              </div>
+            </div>
+            <div class="dim-tip-img"><img src="assets/dim-tip-ground.png" alt="" /></div>
+          </div>
+        </button>
+
+        <!-- Front wheel / Overall length -->
+        <button class="dim-dot active" style="left:30%;top:68%" data-label="Overall Length" data-value="2065" data-unit="mm">
+          <div class="dim-tip">
+            <div class="dim-tip-body">
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Overall Length</span>
+                <span class="dim-tip-value">2065<span class="tu"> mm</span></span>
+              </div>
+            </div>
+            <div class="dim-tip-img"><img src="assets/dim-tip-wheel.png" alt="" /></div>
+          </div>
+        </button>
+
+        <!-- Rear wheel / Wheelbase (card opens left) -->
+        <button class="dim-dot" style="left:77%;top:68%" data-label="Wheelbase" data-value="1416" data-unit="mm">
+          <div class="dim-tip left">
+            <div class="dim-tip-body">
+              <div class="dim-tip-stat">
+                <span class="dim-tip-label">Wheelbase</span>
+                <span class="dim-tip-value">1416<span class="tu"> mm</span></span>
+              </div>
+            </div>
+            <div class="dim-tip-img"><img src="assets/dim-tip-wheel.png" alt="" /></div>
+          </div>
+        </button>
+      </div>
+
+      <div class="dim-bar">
+        <div class="dim-bar-line"></div>
+        <div class="dim-bar-spec">
+          <span class="dim-bar-label" id="dimLabel">Overall Length</span>
+          <span class="dim-bar-value" id="dimValue">2065<span class="dim-unit">mm</span></span>
         </div>
       </div>
     </section>
+
+    <!-- ===== Comparison (variants) ===== -->
+    <div class="new-comparison" id="compare">
+
+      <div class="cmp-sticky-hd">
+        <div class="cmp-sticky-brand">
+          <img class="cmp-logo" src="assets/hooga-logo.png" alt="Hooga"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <svg class="cmp-logo-fallback" viewBox="0 0 110 28" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="108" height="26" rx="2" stroke="#E8251F" stroke-width="2" fill="none"/>
+            <text x="55" y="21" font-family="Arial Black,Arial" font-size="18" font-weight="900"
+                  font-style="italic" text-anchor="middle" fill="#E8251F" letter-spacing="-0.5">HOO<tspan fill="#003DA5">GA</tspan></text>
+          </svg>
+          <span class="cmp-sub">Variants comparison</span>
+        </div>
+        <div class="cmp-sticky-model">
+          <img class="cmp-bike" src="assets/m1s-bike.png" alt="M1S" />
+          <div>
+            <div class="cmp-model-name">M1S</div>
+            <div class="cmp-model-tag">Standard</div>
+          </div>
+        </div>
+        <div class="cmp-sticky-model">
+          <img class="cmp-bike" src="assets/m1r-bike.png" alt="M1R" />
+          <div>
+            <div class="cmp-model-name">M1R</div>
+            <div class="cmp-model-tag">Performance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Powertrain -->
+      <div class="new-sec">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Powertrain</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Motor (Rated)</span><span class="new-row-val lo"><b>8</b> <span class="u">kW</span></span><span class="new-row-val"><b>12</b> <span class="u">kW</span></span></div>
+          <div class="new-row"><span class="new-row-label">Motor (Peak)</span><span class="new-row-val lo"><b>16</b> <span class="u">kW</span></span><span class="new-row-val"><b>28</b> <span class="u">kW</span></span></div>
+          <div class="new-row"><span class="new-row-label">Peak Torque</span><span class="new-row-val lo"><b>42</b> <span class="u">Nm</span></span><span class="new-row-val"><b>76</b> <span class="u">Nm</span></span></div>
+          <div class="new-row"><span class="new-row-label">Battery Capacity</span><span class="new-row-val lo"><b>3.0</b> <span class="u">kWh</span></span><span class="new-row-val"><b>5.4</b> <span class="u">kWh</span></span></div>
+          <div class="new-row"><span class="new-row-label">Battery Type</span><span class="new-row-val">Lithium-ion</span><span class="new-row-val">Lithium-ion</span></div>
+          <div class="new-row"><span class="new-row-label">Charger</span><span class="new-row-val">Standard</span><span class="new-row-val">Fast</span></div>
+          <div class="new-row"><span class="new-row-label">Charge Time (0–80%)</span><span class="new-row-val lo"><b>4.5</b> <span class="u">hrs</span></span><span class="new-row-val"><b>2.5</b> <span class="u">hrs</span></span></div>
+        </div></div>
+      </div>
+
+      <!-- Performance -->
+      <div class="new-sec">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Performance</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Top Speed</span><span class="new-row-val lo"><b>80</b> <span class="u">km/h</span></span><span class="new-row-val"><b>120</b> <span class="u">km/h</span></span></div>
+          <div class="new-row"><span class="new-row-label">0–60 km/h</span><span class="new-row-val lo"><b>4.8</b> <span class="u">sec</span></span><span class="new-row-val"><b>2.9</b> <span class="u">sec</span></span></div>
+          <div class="new-row"><span class="new-row-label">Range (City)</span><span class="new-row-val lo"><b>80</b> <span class="u">km</span></span><span class="new-row-val"><b>130</b> <span class="u">km</span></span></div>
+          <div class="new-row"><span class="new-row-label">Range (Off-road)</span><span class="new-row-val lo"><b>55</b> <span class="u">km</span></span><span class="new-row-val"><b>90</b> <span class="u">km</span></span></div>
+          <div class="new-row"><span class="new-row-label">Riding Modes</span><span class="new-row-val lo"><b>2</b> <span class="u">modes</span></span><span class="new-row-val"><b>4</b> <span class="u">modes</span></span></div>
+          <div class="new-row"><span class="new-row-label">Regenerative Braking</span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+          <div class="new-row"><span class="new-row-label">Traction Control</span>
+            <span class="new-row-val"><span class="icon-no"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- Transmission -->
+      <div class="new-sec closed">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Transmission</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Gearbox</span><span class="new-row-val">Single Speed</span><span class="new-row-val">Single Speed</span></div>
+          <div class="new-row"><span class="new-row-label">Drive System</span><span class="new-row-val">Chain Drive</span><span class="new-row-val">Chain Drive</span></div>
+          <div class="new-row"><span class="new-row-label">Front Sprocket</span><span class="new-row-val"><b>13</b> <span class="u">T</span></span><span class="new-row-val"><b>14</b> <span class="u">T</span></span></div>
+          <div class="new-row"><span class="new-row-label">Rear Sprocket</span><span class="new-row-val"><b>42</b> <span class="u">T</span></span><span class="new-row-val"><b>38</b> <span class="u">T</span></span></div>
+        </div></div>
+      </div>
+
+      <!-- Wheels / Tyres / Brakes -->
+      <div class="new-sec closed">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Wheels / Tyres / Brakes</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Front Wheel</span><span class="new-row-val"><b>21</b> <span class="u">inch</span></span><span class="new-row-val"><b>21</b> <span class="u">inch</span></span></div>
+          <div class="new-row"><span class="new-row-label">Rear Wheel</span><span class="new-row-val"><b>18</b> <span class="u">inch</span></span><span class="new-row-val"><b>18</b> <span class="u">inch</span></span></div>
+          <div class="new-row"><span class="new-row-label">Front Tyre</span><span class="new-row-val">80/100-21</span><span class="new-row-val">80/100-21</span></div>
+          <div class="new-row"><span class="new-row-label">Rear Tyre</span><span class="new-row-val">110/100-18</span><span class="new-row-val">110/100-18</span></div>
+          <div class="new-row"><span class="new-row-label">Front Brake</span><span class="new-row-val"><b>260</b> <span class="u">mm Disc</span></span><span class="new-row-val"><b>260</b> <span class="u">mm Disc</span></span></div>
+          <div class="new-row"><span class="new-row-label">Rear Brake</span><span class="new-row-val"><b>220</b> <span class="u">mm Disc</span></span><span class="new-row-val"><b>220</b> <span class="u">mm Disc</span></span></div>
+          <div class="new-row"><span class="new-row-label">Front Suspension</span><span class="new-row-val lo">WP XACT <span class="u">43 mm</span></span><span class="new-row-val">WP XACT <span class="u">48 mm</span></span></div>
+          <div class="new-row"><span class="new-row-label">Rear Suspension</span><span class="new-row-val">WP XACT Mono</span><span class="new-row-val">WP XACT Mono <span class="u">Pro</span></span></div>
+        </div></div>
+      </div>
+
+      <!-- Dimensions & Weight -->
+      <div class="new-sec closed">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Dimensions &amp; Weight</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Kerb Weight</span><span class="new-row-val lo"><b>112</b> <span class="u">kg</span></span><span class="new-row-val"><b>124</b> <span class="u">kg</span></span></div>
+          <div class="new-row"><span class="new-row-label">Seat Height</span><span class="new-row-val"><b>895</b> <span class="u">mm</span></span><span class="new-row-val"><b>895</b> <span class="u">mm</span></span></div>
+          <div class="new-row"><span class="new-row-label">Ground Clearance</span><span class="new-row-val lo"><b>320</b> <span class="u">mm</span></span><span class="new-row-val"><b>340</b> <span class="u">mm</span></span></div>
+          <div class="new-row"><span class="new-row-label">Wheelbase</span><span class="new-row-val"><b>1460</b> <span class="u">mm</span></span><span class="new-row-val"><b>1460</b> <span class="u">mm</span></span></div>
+        </div></div>
+      </div>
+
+      <!-- Features -->
+      <div class="new-sec closed">
+        <div class="new-sec-hd" onclick="newTog(this)">
+          <span class="new-sec-title">Features</span>
+          <span class="new-chev"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></span>
+        </div>
+        <div class="new-sec-body"><div class="new-sec-inner">
+          <div class="new-row"><span class="new-row-label">Display</span><span class="new-row-val lo">LCD</span><span class="new-row-val">TFT Color</span></div>
+          <div class="new-row"><span class="new-row-label">Bluetooth</span>
+            <span class="new-row-val"><span class="icon-no"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+          <div class="new-row"><span class="new-row-label">GPS / Navigation</span>
+            <span class="new-row-val"><span class="icon-no"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+          <div class="new-row"><span class="new-row-label">OTA Updates</span>
+            <span class="new-row-val"><span class="icon-no"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+          <div class="new-row"><span class="new-row-label">Immobiliser</span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+          <div class="new-row"><span class="new-row-label">LED Lighting</span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+            <span class="new-row-val"><span class="icon-yes"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0"/></svg></span></span>
+          </div>
+        </div></div>
+      </div>
+
+    </div><!-- /new-comparison -->
 
   </main>
 
@@ -393,5 +780,142 @@
   <div class="toast" id="toast">Film coming soon 🎬</div>
 
   <script src="js/main.js?v=6"></script>
+
+  <!-- ── Floating CTA ── -->
+  <button class="si-btn" id="siBtn">SHOW INTEREST</button>
+
+  <!-- ── Interest Modal ── -->
+  <div class="si-overlay" id="siOverlay">
+    <div class="si-modal">
+      <div class="si-modal-head">
+        <h2 class="si-modal-title">Submit your interest<br>in Hooga</h2>
+        <button class="si-close" id="siClose" aria-label="Close">&#x2715;</button>
+      </div>
+      <form class="si-form" id="siForm" onsubmit="return false">
+        <div class="si-field">
+          <label class="si-label">Name</label>
+          <input class="si-input" type="text" placeholder="Your full name" />
+        </div>
+        <div class="si-field">
+          <label class="si-label">Contact Number</label>
+          <input class="si-input" type="tel" placeholder="+91 00000 00000" />
+        </div>
+        <div class="si-field">
+          <label class="si-label">Email</label>
+          <input class="si-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="si-field">
+          <label class="si-label">Address</label>
+          <input class="si-input" type="text" placeholder="Street, City, State" />
+        </div>
+        <div class="si-field">
+          <label class="si-label">Pincode</label>
+          <input class="si-input" type="text" inputmode="numeric" maxlength="6" placeholder="000000" />
+        </div>
+        <button class="si-submit" type="submit">Submit Interest</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  /* ── Dimensions hotspot cycle ── */
+  (function() {
+    var dots = Array.from(document.querySelectorAll('.dim-dot'));
+    var barLabel = document.getElementById('dimLabel');
+    var barValue = document.getElementById('dimValue');
+    if (!dots.length || !barLabel) return;
+
+    var cycleOrder = [0, 1, 3, 2, 4];
+    var cycleStep = 0, timer = null, hoverPaused = false;
+
+    function setBarSpec(dot) {
+      barLabel.textContent = dot.dataset.label;
+      barValue.innerHTML = dot.dataset.value + '<span class="dim-unit">' + dot.dataset.unit + '</span>';
+    }
+    function showStep(idx) {
+      dots.forEach(function(d) { d.classList.remove('auto-show'); });
+      var dot = dots[cycleOrder[idx]];
+      dot.classList.add('auto-show');
+      setBarSpec(dot);
+    }
+    function startCycle() {
+      if (timer) clearInterval(timer);
+      showStep(cycleStep);
+      timer = setInterval(function() {
+        cycleStep = (cycleStep + 1) % cycleOrder.length;
+        showStep(cycleStep);
+      }, 2000);
+    }
+    function stopCycle() {
+      clearInterval(timer); timer = null;
+      dots.forEach(function(d) { d.classList.remove('auto-show'); });
+    }
+    setTimeout(function() { if (!hoverPaused) startCycle(); }, 600);
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('mouseenter', function() {
+        hoverPaused = true; stopCycle();
+        dots.forEach(function(d) { d.classList.remove('auto-show'); });
+        dot.classList.add('auto-show'); setBarSpec(dot);
+      });
+      dot.addEventListener('mouseleave', function() {
+        dot.classList.remove('auto-show'); hoverPaused = false; startCycle();
+      });
+      dot.addEventListener('click', function() {
+        dots.forEach(function(d) { d.classList.remove('active'); });
+        dot.classList.add('active'); setBarSpec(dot);
+      });
+    });
+  })();
+
+  /* ── Comparison accordion ── */
+  function newTog(hd) { hd.closest('.new-sec').classList.toggle('closed'); }
+
+  /* ── Floating CTA ── */
+  (function() {
+    var btn = document.getElementById('siBtn');
+    var overlay = document.getElementById('siOverlay');
+    var closeBtn = document.getElementById('siClose');
+    var comparison = document.querySelector('.new-comparison');
+    var LABEL = 'SHOW INTEREST';
+    var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@!%';
+    var scrambleIv = null;
+
+    function scramble(el, text) {
+      if (scrambleIv) clearInterval(scrambleIv);
+      var steps = Math.round(520 / 36), step = 0;
+      scrambleIv = setInterval(function() {
+        var progress = step / steps, out = '';
+        for (var i = 0; i < text.length; i++) {
+          if (text[i] === ' ') { out += ' '; continue; }
+          out += progress * text.length > i ? text[i] : CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+        el.textContent = out;
+        if (++step > steps) { clearInterval(scrambleIv); scrambleIv = null; el.textContent = text; }
+      }, 36);
+    }
+
+    btn.addEventListener('mouseenter', function() { scramble(btn, LABEL); });
+    btn.addEventListener('mouseleave', function() {
+      if (scrambleIv) { clearInterval(scrambleIv); scrambleIv = null; }
+      btn.textContent = LABEL;
+    });
+
+    if (comparison) {
+      function updateColor() {
+        var compTop = comparison.getBoundingClientRect().top;
+        var btnTop = window.innerHeight - 28 - 48;
+        btn.classList.toggle('on-light', btnTop >= compTop);
+      }
+      window.addEventListener('scroll', updateColor, { passive: true });
+      updateColor();
+    }
+
+    btn.addEventListener('click', function() { overlay.classList.add('open'); });
+    closeBtn.addEventListener('click', function() { overlay.classList.remove('open'); });
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') overlay.classList.remove('open'); });
+  })();
+  </script>
 </body>
 </html>
